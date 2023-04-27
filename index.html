@@ -9,6 +9,17 @@
 <body>
     <div id="main">
         start here
+        <g transform="translate(10,20)">
+            <text dy="-0.3em">Filters:</text>
+            <g class="filter selected" value="gdp-per-capita">
+                <rect height="20" width="65" rx="3" ry="3"/>
+                <text x="4" dy="1.3em">GDP per capita</text>
+            </g>
+            <g class="filter" transform="translate(73)" value="health-expenditure">
+                <rect height="20" width="98" rx="3" ry="3"/>
+                <text x="4" dy="1.3em">Health Expenditure</text>
+            </g>
+        </g>
     </div>
 </body>
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
