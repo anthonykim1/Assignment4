@@ -3,7 +3,7 @@ var margin = {top: 30, right: 30, bottom: 70, left: 60},
     height = 400 - margin.top - margin.bottom;
 
 // append the svg object to the body of the page
-var svg = d3.select("main")
+var svg = d3.select("#main")
   .append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
@@ -12,41 +12,43 @@ var svg = d3.select("main")
           "translate(" + margin.left + "," + margin.top + ")");
 
 // Parse the Data
-d3.csv("dataset.csv", function(data) {
-
+d3.csv("dataset.csv").then(function(data) {
+  console.log(data); 
   // sort data
-  data.sort(function(b, a) {
-    return a.Value - b.Value;
+  data.sort(function(a, b) {
+    return d3.descending(a["GDP ($USD billions PPP) 2021"], b["GDP ($USD billions PPP) 2021"]);
   });
 
   // X axis
-  var x = d3.scaleBand()
+  var xScale = d3.scaleBand()
     .range([ 0, width ])
     .domain(data.map(function(d) { return d.Country; }))
     .padding(0.2);
   svg.append("g")
     .attr("transform", "translate(0," + height + ")")
-    .call(d3.axisBottom(x))
+    .call(d3.axisBottom(xScale))
     .selectAll("text")
       .attr("transform", "translate(-10,0)rotate(-45)")
-      .style("text-anchor", "end");
+      .style("text-anchor", "end")
+      .style("font-size", "8px");
 
   // Add Y axis
-  var y = d3.scaleLinear()
-    .domain([0, 13000])
+  var yScale = d3.scaleLinear()
+    .domain([0, 2000])
     .range([ height, 0]);
   svg.append("g")
-    .call(d3.axisLeft(y));
+    .call(d3.axisLeft(yScale));
 
   // Bars
-  svg.selectAll("mybar")
+  svg.selectAll(".bar")
     .data(data)
     .enter()
     .append("rect")
-      .attr("x", function(d) { return x(d.Country); })
-      .attr("y", function(d) { return y(d.Value); })
-      .attr("width", x.bandwidth())
-      .attr("height", function(d) { return height - y(d.Value); })
+      .attr("class", "bar")
+      .attr("x", function(d) { return xScale(d.Country); })
+      .attr("y", function(d) { return yScale(d["GDP ($USD billions PPP) 2021"]); })
+      .attr("width", xScale.bandwidth())
+      .attr("height", function(d) { return height - yScale(d["GDP ($USD billions PPP) 2021"]); })
       .attr("fill", "#69b3a2")
 
 })
