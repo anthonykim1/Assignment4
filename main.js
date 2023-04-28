@@ -90,6 +90,7 @@ d3.csv("dataset.csv").then(function(data) {
       })
       .on("click", function(d){
         svg.select(".baseline").remove(); 
+        svg.select(".baseline-country").remove(); 
 
         baseline_value = yScale(+d["GDP per capita in $ (PPP) 2021"]);
         svg.append("line")
@@ -100,6 +101,13 @@ d3.csv("dataset.csv").then(function(data) {
           .attr("y2", baseline_value)
           .style("stroke", "#999")
           .style("stroke-dasharray", ("3, 3"));
+        svg.append("text")
+          .attr("class", "baseline-country")
+          .attr("x", xScale(d.Country) + xScale.bandwidth() / 2)
+          .attr("y", yScale(+d["GDP per capita in $ (PPP) 2021"]) - 10)
+          .attr("text-anchor", "middle")
+          .style("font-size", "10px")
+          .text(d.Country);
       }); 
 
 
