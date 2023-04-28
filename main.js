@@ -15,8 +15,9 @@ var svg = d3.select("#main")
 
 // Parse the Data
 d3.csv("dataset.csv").then(function(data) {
-  console.log(data);
   // sort data
+
+  updateChartGDP(data); 
   data.sort(function(a, b) {
     return d3.descending(+a["GDP per capita in $ (PPP) 2021"], +b["GDP per capita in $ (PPP) 2021"]);
   });
@@ -73,14 +74,33 @@ d3.csv("dataset.csv").then(function(data) {
       .attr("width", xScale.bandwidth())
       .attr("height", function(d) { return height - yScale(+d["GDP per capita in $ (PPP) 2021"]); })
       .attr("fill", "#69b3a2")
+      .on("mouseover", function(d) {
+        d3.select(this).attr("fill", "red");
+      })
+      .on("mouseout", function(d) {
+        d3.select(this).attr("fill", "#69b3a2");
+      })
+      .on("click", function(d){
+        svg.select(".baseline").remove(); 
 
-  svg.append("line")
-    .attr("x1", 0)
-    .attr("y1", baseline_value)
-    .attr("x2", width)
-    .attr("y2", baseline_value)
-    .style("stroke", "#999")
-    .style("stroke-dasharray", ("3, 3"));
+        baseline_value = yScale(+d["GDP per capita in $ (PPP) 2021"]);
+        svg.append("line")
+          .attr("class", "baseline")
+          .attr("x1", 0)
+          .attr("y1", baseline_value)
+          .attr("x2", width)
+          .attr("y2", baseline_value)
+          .style("stroke", "#999")
+          .style("stroke-dasharray", ("3, 3"));
+      }); 
 
 
 })
+
+function updateChartHelath(){
+  console.log("update chart Health expenditure"); 
+}
+
+function updateChartGDP(){
+  console.log("update chart GDP per capita"); 
+} 

@@ -8,8 +8,14 @@
 </head>
 <body>
     <div id="main">
-        <button type="button">GDP per capita</button>
-        <button type="button">Health Expenditure</button>
+        <form id="form" class="btn-group btn-group-toggle" data-toggle="buttons">
+            <label class="btn btn-secondary active">
+              <input type="checkbox" onclick="updateChartGDP()">GDP per capita<br>
+            </label>
+            <label class="btn btn-secondary">
+              <input type="checkbox" onclick="updateChartHelath()">Health Expenditure<br>
+            </label>
+          </form>
     </div>
 </body>
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>

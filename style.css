@@ -24,7 +24,7 @@ body {
 }
 
 .filter rect{
-    fill: #ddd;
+    fill: #923f3f;
 }
 
 .filter.selected text {
@@ -55,4 +55,15 @@ body {
 .bar.hovered text {
     font-weight: bold;
 };
+
+button {
+    background-color: #ccc;
+}
+
+button:focus {
+    background-color: #fe902b;
+}
+
+
+
 
