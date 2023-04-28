@@ -1,5 +1,5 @@
 var margin = {top: 30, right: 30, bottom: 70, left: 60},
-    width = 460 - margin.left - margin.right,
+    width = 900 - margin.left - margin.right,
     height = 400 - margin.top - margin.bottom;
 
 
@@ -33,7 +33,7 @@ d3.csv("dataset.csv").then(function(data) {
     .selectAll("text")
       .attr("transform", "translate(-10,0)rotate(-45)")
       .style("text-anchor", "end")
-      .style("font-size", "8px");
+      .style("font-size", "6px");
 
 
   // Add Y axis
@@ -56,6 +56,7 @@ d3.csv("dataset.csv").then(function(data) {
 
 
   let baseline_value; 
+  
   // Bars
   svg.selectAll(".bar")
     .data(data)

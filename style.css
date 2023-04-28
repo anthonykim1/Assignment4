@@ -48,3 +48,11 @@ body {
     font-weight: bold;
 }
 
+.bar.hovered rect {
+    fill: #fe902b;
+};
+
+.bar.hovered text {
+    font-weight: bold;
+};
+
