@@ -76,9 +76,17 @@ d3.csv("dataset.csv").then(function(data) {
       .attr("fill", "#69b3a2")
       .on("mouseover", function(d) {
         d3.select(this).attr("fill", "red");
+        svg.append("text")
+          .attr("class", "bar-label")
+          .attr("x", xScale(d.Country) + xScale.bandwidth() / 2)
+          .attr("y", yScale(+d["GDP per capita in $ (PPP) 2021"]) - 10)
+          .attr("text-anchor", "middle")
+          .style("font-size", "10px")
+          .text(d.Country);
       })
       .on("mouseout", function(d) {
         d3.select(this).attr("fill", "#69b3a2");
+        svg.select(".bar-label").remove(); 
       })
       .on("click", function(d){
         svg.select(".baseline").remove(); 
