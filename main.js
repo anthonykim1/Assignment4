@@ -2,6 +2,7 @@ var margin = {top: 30, right: 30, bottom: 70, left: 60},
     width = 1000 - margin.left - margin.right,
     height = 400 - margin.top - margin.bottom;
 
+
 // append the svg object to the body of the page
 var svg = d3.select("#main")
   .append("svg")
@@ -11,6 +12,7 @@ var svg = d3.select("#main")
     .attr("transform",
           "translate(" + margin.left + "," + margin.top + ")");
 
+
 function onCategoryChanged() {
   var select = d3.select('#categorySelect').node();
   // Get current value of select element
@@ -19,14 +21,18 @@ function onCategoryChanged() {
   updateChart(category);
 }
 
+
 // Parse the Data
 d3.csv("dataset.csv").then(function(dataset) {
   // sort data
   data = dataset;
 
+
   data.sort(function(a, b) {
     return d3.descending(+a["GDP per capita in $ (PPP) 2021"], +b["GDP per capita in $ (PPP) 2021"]);
   });
+
+
 
 
   // X axis
@@ -44,6 +50,8 @@ d3.csv("dataset.csv").then(function(dataset) {
       .style("font-size", "5px");
 
 
+
+
   // Add Y axis
   yScale = d3.scaleLinear()
     .domain([0, 140000])
@@ -51,7 +59,7 @@ d3.csv("dataset.csv").then(function(dataset) {
   svg.append("g")
     .attr("class", "y-axis")
     .call(d3.axisLeft(yScale));
-  
+ 
   // Add Y axis label
   svg.append("text")
     .attr("class", "y-axis-title")
@@ -65,8 +73,11 @@ d3.csv("dataset.csv").then(function(dataset) {
 
 
 
-  let baseline_value; 
-  
+
+
+
+  let baseline_value;
+ 
   // Bars
   svg.selectAll(".bar")
     .data(data)
@@ -77,7 +88,7 @@ d3.csv("dataset.csv").then(function(dataset) {
         if(d.Country === "United States") {
           baseline_value = yScale(+d["GDP per capita in $ (PPP) 2021"]);
         }
-        return xScale(d.Country); 
+        return xScale(d.Country);
       })
       .attr("y", function(d) { return yScale(+d["GDP per capita in $ (PPP) 2021"]); })
       .attr("width", xScale.bandwidth())
@@ -95,11 +106,12 @@ d3.csv("dataset.csv").then(function(dataset) {
       })
       .on("mouseout", function(d) {
         d3.select(this).attr("fill", "#69b3a2");
-        svg.select(".bar-label").remove(); 
+        svg.select(".bar-label").remove();
       })
       .on("click", function(d){
-        svg.select(".baseline").remove(); 
-        svg.select(".baseline-country").remove(); 
+        svg.select(".baseline").remove();
+        svg.select(".baseline-country").remove();
+
 
         baseline_value = yScale(+d["GDP per capita in $ (PPP) 2021"]);
         svg.append("line")
@@ -117,33 +129,40 @@ d3.csv("dataset.csv").then(function(dataset) {
           .attr("text-anchor", "middle")
           .style("font-size", "10px")
           .text(d.Country);
-      }); 
+      });
+
+
 
 
 })
 
+
 function updateChart(category){
   if(category === "gdp-per-capita") {
-    updateChartGDP(); 
+    updateChartGDP();
   } else if (category === "health-expenditure"){
-    updateChartHealth(); 
+    updateChartHealth();
   } else {
-    updateChartHealthGDP(); 
+    updateChartHealthGDP();
   }
 }
 
+
 function updateChartHealth(){
-  console.log("update chart Health expenditure"); 
+  console.log("update chart Health expenditure");
   svg.selectAll(".bar").remove();
-  svg.select(".x-axis").remove(); 
-  svg.select(".y-axis").remove(); 
-  svg.select(".y-axis-title").remove(); 
-  svg.select(".baseline").remove(); 
-  svg.select(".baseline-country").remove(); 
+  svg.select(".x-axis").remove();
+  svg.select(".y-axis").remove();
+  svg.select(".y-axis-title").remove();
+  svg.select(".baseline").remove();
+  svg.select(".baseline-country").remove();
+
 
   data.sort(function(a, b) {
     return d3.descending(+a["health expenditure per person ($) 2018"], +b["health expenditure per person ($) 2018"]);
   });
+
+
 
 
   // X axis
@@ -161,6 +180,8 @@ function updateChartHealth(){
       .style("font-size", "5px");
 
 
+
+
   // Add Y axis
   yScale = d3.scaleLinear()
     .domain([0, 11000])
@@ -168,7 +189,7 @@ function updateChartHealth(){
   svg.append("g")
     .attr("class", "y-axis")
     .call(d3.axisLeft(yScale));
-  
+ 
   // Add Y axis label
   svg.append("text")
     .attr("class", "y-axis-title")
@@ -182,9 +203,13 @@ function updateChartHealth(){
 
 
 
-  let baseline_value; 
-  
+
+
+
+  let baseline_value;
  
+ 
+
 
   svg.selectAll(".bar")
     .data(data)
@@ -195,7 +220,7 @@ function updateChartHealth(){
         if(d.Country === "United States") {
           baseline_value = yScale(+d["health expenditure per person ($) 2018"]);
         }
-        return xScale(d.Country); 
+        return xScale(d.Country);
       })
       .attr("y", function(d) { return yScale(+d["health expenditure per person ($) 2018"]); })
       .attr("width", xScale.bandwidth())
@@ -213,11 +238,12 @@ function updateChartHealth(){
       })
       .on("mouseout", function(d) {
         d3.select(this).attr("fill", "#69b3a2");
-        svg.select(".bar-label").remove(); 
+        svg.select(".bar-label").remove();
       })
       .on("click", function(d){
-        svg.select(".baseline").remove(); 
-        svg.select(".baseline-country").remove(); 
+        svg.select(".baseline").remove();
+        svg.select(".baseline-country").remove();
+
 
         baseline_value = yScale(+d["health expenditure per person ($) 2018"]);
         svg.append("line")
@@ -235,21 +261,25 @@ function updateChartHealth(){
           .attr("text-anchor", "middle")
           .style("font-size", "10px")
           .text(d.Country);
-      }); 
+      });
 }
+
 
 function updateChartGDP(){
-  console.log("update chart GDP per capita"); 
+  console.log("update chart GDP per capita");
   svg.selectAll(".bar").remove();
-  svg.selectAll(".x-axis").remove(); 
-  svg.selectAll(".y-axis").remove(); 
-  svg.selectAll(".y-axis-title").remove(); 
-  svg.selectAll(".baseline").remove(); 
-  svg.selectAll(".baseline-country").remove(); 
+  svg.selectAll(".x-axis").remove();
+  svg.selectAll(".y-axis").remove();
+  svg.selectAll(".y-axis-title").remove();
+  svg.selectAll(".baseline").remove();
+  svg.selectAll(".baseline-country").remove();
+
 
   data.sort(function(a, b) {
     return d3.descending(+a["GDP per capita in $ (PPP) 2021"], +b["GDP per capita in $ (PPP) 2021"]);
   });
+
+
 
 
   // X axis
@@ -267,6 +297,8 @@ function updateChartGDP(){
       .style("font-size", "5px");
 
 
+
+
   // Add Y axis
   yScale = d3.scaleLinear()
     .domain([0, 140000])
@@ -274,7 +306,7 @@ function updateChartGDP(){
   svg.append("g")
     .attr("class", "y-axis")
     .call(d3.axisLeft(yScale));
-  
+ 
   // Add Y axis label
   svg.append("text")
     .attr("class", "y-axis-title")
@@ -288,9 +320,13 @@ function updateChartGDP(){
 
 
 
-  let baseline_value; 
-  
+
+
+
+  let baseline_value;
  
+ 
+
 
   svg.selectAll(".bar")
     .data(data)
@@ -301,7 +337,7 @@ function updateChartGDP(){
         if(d.Country === "United States") {
           baseline_value = yScale(+d["GDP per capita in $ (PPP) 2021"]);
         }
-        return xScale(d.Country); 
+        return xScale(d.Country);
       })
       .attr("y", function(d) { return yScale(+d["GDP per capita in $ (PPP) 2021"]); })
       .attr("width", xScale.bandwidth())
@@ -319,11 +355,12 @@ function updateChartGDP(){
       })
       .on("mouseout", function(d) {
         d3.select(this).attr("fill", "#69b3a2");
-        svg.select(".bar-label").remove(); 
+        svg.select(".bar-label").remove();
       })
       .on("click", function(d){
-        svg.select(".baseline").remove(); 
-        svg.select(".baseline-country").remove(); 
+        svg.select(".baseline").remove();
+        svg.select(".baseline-country").remove();
+
 
         baseline_value = yScale(+d["GDP per capita in $ (PPP) 2021"]);
         svg.append("line")
@@ -341,22 +378,26 @@ function updateChartGDP(){
           .attr("text-anchor", "middle")
           .style("font-size", "10px")
           .text(d.Country);
-      }); 
-} 
+      });
+}
+
 
 function updateChartHealthGDP(){
-  console.log("update chart GDP & Health"); 
-  
+  console.log("update chart GDP & Health");
+ 
   svg.selectAll(".bar").remove();
-  svg.selectAll(".x-axis").remove(); 
-  svg.selectAll(".y-axis").remove(); 
-  svg.selectAll(".y-axis-title").remove(); 
-  svg.selectAll(".baseline").remove(); 
-  svg.selectAll(".baseline-country").remove(); 
+  svg.selectAll(".x-axis").remove();
+  svg.selectAll(".y-axis").remove();
+  svg.selectAll(".y-axis-title").remove();
+  svg.selectAll(".baseline").remove();
+  svg.selectAll(".baseline-country").remove();
+
 
   data.sort(function(a, b) {
     return d3.descending(+a["GDP per capita in $ (PPP) 2021"], +b["GDP per capita in $ (PPP) 2021"]);
   });
+
+
 
 
   // X axis
@@ -374,6 +415,8 @@ function updateChartHealthGDP(){
       .style("font-size", "5px");
 
 
+
+
   // Add Y axis
   yScale = d3.scaleLinear()
     .domain([0, 140000])
@@ -381,7 +424,7 @@ function updateChartHealthGDP(){
   svg.append("g")
     .attr("class", "y-axis")
     .call(d3.axisLeft(yScale));
-  
+ 
   // Add Y axis label
   svg.append("text")
     .attr("class", "y-axis-title")
@@ -395,9 +438,13 @@ function updateChartHealthGDP(){
 
 
 
-  let baseline_value; 
-  
+
+
+
+  let baseline_value;
  
+ 
+
 
   svg.selectAll(".bar")
     .data(data)
@@ -408,7 +455,7 @@ function updateChartHealthGDP(){
         if(d.Country === "United States") {
           baseline_value = yScale(+d["GDP per capita in $ (PPP) 2021"]);
         }
-        return xScale(d.Country); 
+        return xScale(d.Country);
       })
       .attr("y", function(d) { return yScale(+d["GDP per capita in $ (PPP) 2021"]); })
       .attr("width", xScale.bandwidth())
@@ -426,11 +473,12 @@ function updateChartHealthGDP(){
       })
       .on("mouseout", function(d) {
         d3.select(this).attr("fill", "#69b3a2");
-        svg.select(".bar-label").remove(); 
+        svg.select(".bar-label").remove();
       })
       .on("click", function(d){
-        svg.select(".baseline").remove(); 
-        svg.select(".baseline-country").remove(); 
+        svg.select(".baseline").remove();
+        svg.select(".baseline-country").remove();
+
 
         baseline_value = yScale(+d["GDP per capita in $ (PPP) 2021"]);
         svg.append("line")
@@ -448,5 +496,7 @@ function updateChartHealthGDP(){
           .attr("text-anchor", "middle")
           .style("font-size", "10px")
           .text(d.Country);
-      }); 
+      });
 }
+
+
