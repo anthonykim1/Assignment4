@@ -161,7 +161,7 @@ d3.csv("dataset.csv").then(function(data) {
 
   data.sort(function(a, b) {
     // console.log((+a["GDP ($USD billions PPP) 2018"], +b["GDP ($USD billions PPP) 2018"]));
-    return d3.descending(+a["GDP ($USD billions PPP) 2018"], +b["GDP ($USD billions PPP) 2018"]);
+    return d3.descending(+a["GDP ($USD billions PPP) 2019"], +b["GDP ($USD billions PPP) 2019"]);
   });
   /////////
   // X axis
@@ -194,14 +194,14 @@ svg2.append("g")
     .call(d3.axisLeft(yScale2));
 
     svg2.append("text")
-    .attr("class", "y-axis")
+    .attr("class", ".y-axis-title")
     .attr("transform", "rotate(-90)")
     .attr("y", 0 - marginTwo.left)
     .attr("x",0 - (height2 / 2))
     .attr("dy", "1em")
     .style("text-anchor", "middle")
     .style("font-size", "10px")
-    .text("GDP ($USD billions PPP) 2018");
+    .text("GDP ($USD billions PPP) 2019");
 
 
   let baseline_value; 
@@ -214,22 +214,22 @@ svg2.append("g")
       .attr("class", "bar")
       .attr("x", function(d) {
         if(d.Country === "United States") {
-          baseline_value = yScale2(+d["GDP ($USD billions PPP) 2018"]);
+          baseline_value = yScale2(+d["GDP ($USD billions PPP) 2019"]);
         }
         // STORE in MAP: store d.Country to GDP value in our Hashmap for Future access // 
-        CountryToGDP.set(d.Country, +d["GDP ($USD billions PPP) 2018"]);
+        CountryToGDP.set(d.Country, +d["GDP ($USD billions PPP) 2019"]);
         return xScale2(d.Country); 
       })
-      .attr("y", function(d) { return yScale2(+d["GDP ($USD billions PPP) 2018"]); })
+      .attr("y", function(d) { return yScale2(+d["GDP ($USD billions PPP) 2019"]); })
       .attr("width", xScale2.bandwidth())
-      .attr("height", function(d) { return height2 - yScale2(+d["GDP ($USD billions PPP) 2018"]); })
+      .attr("height", function(d) { return height2 - yScale2(+d["GDP ($USD billions PPP) 2019"]); })
       .attr("fill", "#69b3a2")
       .on("mouseover", function(d) {
         d3.select(this).attr("fill", "red");
         svg2.append("text")
           .attr("class", "bar-label")
           .attr("x", xScale2(d.Country) + xScale2.bandwidth() / 2)
-          .attr("y", yScale2(+d["GDP ($USD billions PPP) 2018"]) - 10)
+          .attr("y", yScale2(+d["GDP ($USD billions PPP) 2019"]) - 10)
           .attr("text-anchor", "middle")
           .style("font-size", "10px")
           .text(d.Country);
@@ -242,7 +242,7 @@ svg2.append("g")
         svg2.select(".baseline").remove(); 
         svg2.select(".baseline-country").remove(); 
 
-        baseline_value = yScale2(+d["GDP ($USD billions PPP) 2018"]);
+        baseline_value = yScale2(+d["GDP ($USD billions PPP) 2019"]);
         svg2.append("line")
           .attr("class", "baseline")
           .attr("x1", 0)
@@ -254,7 +254,7 @@ svg2.append("g")
         svg2.append("text")
           .attr("class", "baseline-country")
           .attr("x", xScale2(d.Country) + xScale2.bandwidth() / 2)
-          .attr("y", yScale2(+d["GDP ($USD billions PPP) 2018"]) - 10)
+          .attr("y", yScale2(+d["GDP ($USD billions PPP) 2019"]) - 10)
           .attr("text-anchor", "middle")
           .style("font-size", "10px")
           .text(d.Country);
@@ -267,11 +267,7 @@ svg2.append("g")
 function updateChartTwo(category) {
   if(category === "gdp") {
     updateChartGDPWhole();
-  } else if (category === "healthPortion"){
-    updateChartHealthTwoPortion();
-  } else if (category === "MilitaryPortion"){
-    updateChartMilitaryTwoPortion();
-  } else if (cateogory === "healthMilitaryPortion") {
+  } else if (category === "healthMilitaryPortion") {
     updateChartHealthMilitaryTwoPortion();
   }
 }
@@ -287,7 +283,7 @@ function updateChart(category){
 }
 
 // update for stacked health in total gdp  **second chart
-function updateChartHealthTwoPortion() {
+function updateChartHealthMilitaryTwoPortion() {
 
   d3.csv("chartTwoDataset.csv").then(function(data2) {
   svg2.selectAll(".bar").remove();
@@ -296,6 +292,11 @@ function updateChartHealthTwoPortion() {
   svg2.select(".y-axis-title").remove();
   svg2.select(".baseline").remove();
   svg2.select(".baseline-country").remove();
+
+  data2.sort(function(a, b) {
+    // console.log((+a["GDP ($USD billions PPP) 2018"], +b["GDP ($USD billions PPP) 2018"]));
+    return d3.descending(+a["GDP without H and M"], +b["GDP without H and M"]);
+  });
 
   // let ourHealthColumn = data.columns.slice(1)[9]; // fetch "expenditure % of GDP" 
   // problem 5/1/23 - These are percentage value as a whole. 
@@ -320,21 +321,21 @@ function updateChartHealthTwoPortion() {
 
 
    var yScale2 = d3.scaleLinear()
-    .domain([0, 2000, 22000])
+    .domain([0, 300,20000])
     .range([height2, 0]);
     svg2.append("g")
     .attr("class", "y-axis")
     .call(d3.axisLeft(yScale2));
 
     svg2.append("text")
-    .attr("class", "y-axis")
+    .attr("class", ".y-axis-title")
     .attr("transform", "rotate(-90)")
     .attr("y", 0 - marginTwo.left)
     .attr("x",0 - (height2 / 2))
     .attr("dy", "1em")
     .style("text-anchor", "middle")
     .style("font-size", "10px")
-    .text("GDP ($USD billions PPP) 2018");
+    .text("GDP ($USD billions PPP) 2019");
   
     // color palette choices 
     var color = d3.scaleOrdinal()
@@ -357,7 +358,7 @@ function updateChartHealthTwoPortion() {
       // enter a second time = loop subgroup per subgroup to add all rectangles
       .data(function(d) { return d; })
       .enter().append("rect")
-        .attr("x", function(d) { return xScale2(d.data.group); })
+        .attr("x", function(d) { return xScale2(d.data.Country); })                                                                     //.attr("x", function(d) { return xScale2(d.data.group); })
         .attr("y", function(d) { return yScale2(d[1]); })
         .attr("height", function(d) { return yScale2(d[0]) - yScale2(d[1]); })
         .attr("width",xScale2.bandwidth())
