@@ -7,32 +7,13 @@
     <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-    <div id="first">
-        <form id="form" class="btn-group btn-group-toggle" data-toggle="buttons">
-            <label class="btn btn-secondary active">
-              <input type="checkbox" onclick="updateChartGDP()">GDP per capita<br>
-            </label>
-            <label class="btn btn-secondary">
-              <input type="checkbox" onclick="updateChartHealth()">Health Expenditure<br>
-            </label>
-            
-          </form>
-        </div>
-        <div id = "second">
-          <br>
-          <br>
-          <br>
-          <form id="formWholeGDP" class="btn-group btn-group-toggle" data-toggle="buttons">
-            <label class="btn btn-secondary active">
-              <input type="checkbox" onclick="healthExpenditureAsPercentageClicked()">Health Expenditure as % of GDP<br>
-            </label>
-            <label class="btn btn-secondary">
-              <input type="checkbox" onclick="militarySpendingAsPercentageClicked()">Military Spending as % of GDP<br>
-            </label>
-            
-          </form>
-        </div>
-         
+    <div id="main">
+        <label for="categorySelect">Show: </label>
+            <select class="custom-select" id="categorySelect" onchange="onCategoryChanged()">
+              <option selected value="gdp-per-capita">GDP per capita</option>
+              <option value="health-expenditure">Health Expenditure</option>
+              <option value="health&gdp-stacked">GDP per capita & Health Expenditure</option>
+            </select>
     </div>
 </body>
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
@@ -42,3 +23,5 @@
 <script type="module" src="https://unpkg.com/d3-scale-break@2.1.1/build/d3-scale-break.min.js"></script>
 <script type="module" src="./main.js"></script>
 </html>
+
+

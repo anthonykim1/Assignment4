@@ -4,18 +4,22 @@
     font-weight: semibold;
 }
 
+
 body {
     font-family: "Open Sans";
     margin: 0;
 }
 
+
 #main {
     margin: 20px;
 }
 
+
 .filter {
     cursor: pointer;
 }
+
 
 .filter text {
     font-size: 11px;
@@ -23,46 +27,62 @@ body {
     fill: #333;
 }
 
+
 .filter rect{
     fill: #923f3f;
 }
+
 
 .filter.selected text {
     fill: #fff;
 }
 
+
 .filter.selected rect {
     fill: #fe902b;
 }
+
 
     .bar.hovered rect {
         fill: #fe902b;
     };
 
+
     .bar.hovered text {
         font-weight: bold;
     };
+
 
 .bar .value {
     font-size: 11px;
     font-weight: bold;
 }
 
+
 .bar.hovered rect {
     fill: #fe902b;
 };
+
 
 .bar.hovered text {
     font-weight: bold;
 };
 
+
 button {
     background-color: #ccc;
 }
 
+
 button:focus {
     background-color: #fe902b;
 }
+
+
+
+
+
+
 
 
 
