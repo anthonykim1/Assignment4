@@ -150,7 +150,8 @@ d3.csv("dataset.csv").then(function(dataset) {
 // global variable to store Country name to GDP value.
 let CountryToGDP = new Map();
 
-// START - Code for second bar chart // 
+// START - Code for second bar chart, specifically the whole GDP section (should be displayed first as default) //
+// storing of the country name to GDP value initialization also happens here // 
 
 d3.csv("dataset.csv").then(function(data) {
   // console.log(data.columns.slice(1)[9]); // column header string value for health ***testing***
@@ -169,6 +170,7 @@ d3.csv("dataset.csv").then(function(data) {
   .domain(data.map(function(d) { return d.Country; }))
   .padding(0.2);
 svg2.append("g")
+  .attr("class", "x-axis")
   .attr("transform", "translate(0," + height2 + ")")
   .call(d3.axisBottom(xScale2))
   .selectAll("text")
@@ -188,9 +190,11 @@ svg2.append("g")
     .domain([0, 4000, 22000])
     .range([height2, 0]);
     svg2.append("g")
+    .attr("class", "y-axis")
     .call(d3.axisLeft(yScale2));
 
     svg2.append("text")
+    .attr("class", "y-axis")
     .attr("transform", "rotate(-90)")
     .attr("y", 0 - marginTwo.left)
     .attr("x",0 - (height2 / 2))
@@ -255,7 +259,7 @@ svg2.append("g")
           .style("font-size", "10px")
           .text(d.Country);
       }); 
-      console.log(CountryToGDP);
+      // console.log(CountryToGDP);
 })
 
 // END - Code for second bar chart // 
@@ -284,6 +288,8 @@ function updateChart(category){
 
 // update for stacked health in total gdp  **second chart
 function updateChartHealthTwoPortion() {
+
+  d3.csv("chartTwoDataset.csv").then(function(data2) {
   svg2.selectAll(".bar").remove();
   svg2.select(".x-axis").remove();
   svg2.select(".y-axis").remove();
@@ -291,17 +297,72 @@ function updateChartHealthTwoPortion() {
   svg2.select(".baseline").remove();
   svg2.select(".baseline-country").remove();
 
-  let ourHealthColumn = data.columns.slice(1)[9]; // fetch "expenditure % of GDP" 
+  // let ourHealthColumn = data.columns.slice(1)[9]; // fetch "expenditure % of GDP" 
   // problem 5/1/23 - These are percentage value as a whole. 
   // need to convert into percentage in decimal form and multiple by the gdp to get the rates we want. 
+  // fixed - Store country to GDP in global hashmap so raw value derived from percentages can be calculated later. 
+
+  var subgroups = data2.columns.slice(1);
+  // console.log(subgroups);
+  // var groups = d3.map(data, function(d){return(d.group)}).keys()
+  var xScale2 = d3.scaleBand()
+  .range([ 0, width2 ])
+  .domain(data2.map(function(d) { return d.Country; }))
+  .padding(0.2);
+  svg2.append("g")
+  .attr("class", "x-axis")
+  .attr("transform", "translate(0," + height2 + ")")
+  .call(d3.axisBottom(xScale2).tickSizeOuter(0))
+  .selectAll("text")
+    .attr("transform", "translate(-10,0)rotate(-45)")
+    .style("text-anchor", "end")
+    .style("font-size", "6px");
 
 
-  data.sort(function(a, b) {
-    // console.log(+a[ourHealthColumn]);
-    // console.log(d3.descending(+a[ourHealthColumn], +b[ourHealthColumn])); working fine - 
-    return d3.descending(+a[ourHealthColumn], +b[ourHealthColumn]);
-  });
+   var yScale2 = d3.scaleLinear()
+    .domain([0, 2000, 22000])
+    .range([height2, 0]);
+    svg2.append("g")
+    .attr("class", "y-axis")
+    .call(d3.axisLeft(yScale2));
 
+    svg2.append("text")
+    .attr("class", "y-axis")
+    .attr("transform", "rotate(-90)")
+    .attr("y", 0 - marginTwo.left)
+    .attr("x",0 - (height2 / 2))
+    .attr("dy", "1em")
+    .style("text-anchor", "middle")
+    .style("font-size", "10px")
+    .text("GDP ($USD billions PPP) 2018");
+  
+    // color palette choices 
+    var color = d3.scaleOrdinal()
+    .domain(subgroups)
+    .range(['#e41a1c','#377eb8','#4daf4a'])
+
+      //stack the data? --> stack per subgroup
+  var stackedData = d3.stack()
+    .keys(subgroups)
+    (data2)
+    console.log(stackedData);
+
+  svg2.append("g")
+    .selectAll("g")
+    // Enter in the stack data = loop key per key = group per group
+    .data(stackedData)
+    .enter().append("g")
+      .attr("fill", function(d) { return color(d.key); })
+      .selectAll("rect")
+      // enter a second time = loop subgroup per subgroup to add all rectangles
+      .data(function(d) { return d; })
+      .enter().append("rect")
+        .attr("x", function(d) { return xScale2(d.data.group); })
+        .attr("y", function(d) { return yScale2(d[1]); })
+        .attr("height", function(d) { return yScale2(d[0]) - yScale2(d[1]); })
+        .attr("width",xScale2.bandwidth())
+
+})
 }
 
 function updateChartHealth(){
@@ -332,7 +393,7 @@ function updateChartHealth(){
       .attr("transform", "translate(-10,0)rotate(-45)")
       .style("text-anchor", "end")
       .style("font-size", "5px");
-
+  // console.log(xScale);
 
 
   // Add Y axis
