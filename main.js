@@ -31,6 +31,14 @@ function onCategoryChanged() {
   updateChart(category);
 }
 
+function onCategoryChangedTwo() {
+  var select = d3.select('#categorySelectTwo').node();
+  // Get current value of select element
+  var category = select.options[select.selectedIndex].value;
+  // Update chart with the selected category of letters
+  updateChartTwo(category);
+}
+
 // Parse the Data
 d3.csv("dataset.csv").then(function(dataset) {
   // sort data
@@ -139,11 +147,19 @@ d3.csv("dataset.csv").then(function(dataset) {
 
 })
 
-// second one
+// global variable to store Country name to GDP value.
+let CountryToGDP = new Map();
+
+// START - Code for second bar chart // 
 
 d3.csv("dataset.csv").then(function(data) {
+  // console.log(data.columns.slice(1)[9]); // column header string value for health ***testing***
+
+  // console.log(groups)  
+  
+
   data.sort(function(a, b) {
-    console.log((+a["GDP ($USD billions PPP) 2018"], +b["GDP ($USD billions PPP) 2018"]));
+    // console.log((+a["GDP ($USD billions PPP) 2018"], +b["GDP ($USD billions PPP) 2018"]));
     return d3.descending(+a["GDP ($USD billions PPP) 2018"], +b["GDP ($USD billions PPP) 2018"]);
   });
   /////////
@@ -196,6 +212,8 @@ svg2.append("g")
         if(d.Country === "United States") {
           baseline_value = yScale2(+d["GDP ($USD billions PPP) 2018"]);
         }
+        // STORE in MAP: store d.Country to GDP value in our Hashmap for Future access // 
+        CountryToGDP.set(d.Country, +d["GDP ($USD billions PPP) 2018"]);
         return xScale2(d.Country); 
       })
       .attr("y", function(d) { return yScale2(+d["GDP ($USD billions PPP) 2018"]); })
@@ -237,8 +255,22 @@ svg2.append("g")
           .style("font-size", "10px")
           .text(d.Country);
       }); 
+      console.log(CountryToGDP);
 })
 
+// END - Code for second bar chart // 
+
+function updateChartTwo(category) {
+  if(category === "gdp") {
+    updateChartGDPWhole();
+  } else if (category === "healthPortion"){
+    updateChartHealthTwoPortion();
+  } else if (category === "MilitaryPortion"){
+    updateChartMilitaryTwoPortion();
+  } else if (cateogory === "healthMilitaryPortion") {
+    updateChartHealthMilitaryTwoPortion();
+  }
+}
 
 function updateChart(category){
   if(category === "gdp-per-capita") {
@@ -248,6 +280,28 @@ function updateChart(category){
   } else {
     updateChartHealthGDP();
   }
+}
+
+// update for stacked health in total gdp  **second chart
+function updateChartHealthTwoPortion() {
+  svg2.selectAll(".bar").remove();
+  svg2.select(".x-axis").remove();
+  svg2.select(".y-axis").remove();
+  svg2.select(".y-axis-title").remove();
+  svg2.select(".baseline").remove();
+  svg2.select(".baseline-country").remove();
+
+  let ourHealthColumn = data.columns.slice(1)[9]; // fetch "expenditure % of GDP" 
+  // problem 5/1/23 - These are percentage value as a whole. 
+  // need to convert into percentage in decimal form and multiple by the gdp to get the rates we want. 
+
+
+  data.sort(function(a, b) {
+    // console.log(+a[ourHealthColumn]);
+    // console.log(d3.descending(+a[ourHealthColumn], +b[ourHealthColumn])); working fine - 
+    return d3.descending(+a[ourHealthColumn], +b[ourHealthColumn]);
+  });
+
 }
 
 function updateChartHealth(){

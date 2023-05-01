@@ -19,16 +19,16 @@
       <br>
           <br>
           <br>
-          <form id="formWholeGDP" class="btn-group btn-group-toggle" data-toggle="buttons">
-            <label class="btn btn-secondary active">
-              <input type="checkbox" onclick="healthExpenditureAsPercentageClicked()">Health Expenditure as % of GDP<br>
-            </label>
-            <label class="btn btn-secondary">
-              <input type="checkbox" onclick="militarySpendingAsPercentageClicked()">Military Spending as % of GDP<br>
-            </label>
+          <label for="categorySelectTwo">Show: </label>
+            <select class="custom-select" id="categorySelectTwo" onchange="onCategoryChangedTwo()">
+              <option selected value="gdp">GDP by itself</option>
+              <option value="healthPortion">Health Stacked</option>
+              <option value="MilitaryPortion">Military Stacked</option>
+              <option value="healthMilitaryPortion">Health and Military stacked</option>
+            </select>
+            <br>
+            <br>
             
-          </form>
-
 
     </div>
 
