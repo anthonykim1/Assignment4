@@ -152,8 +152,15 @@ let CountryToGDP = new Map();
 
 // START - Code for second bar chart, specifically the whole GDP section (should be displayed first as default) //
 // storing of the country name to GDP value initialization also happens here // 
-
+updateChartGDPWhole();
+function updateChartGDPWhole() {
 d3.csv("dataset.csv").then(function(data) {
+  svg2.selectAll(".bar").remove();
+  svg2.select(".x-axis").remove();
+  svg2.select(".y-axis").remove();
+  svg2.select(".y-axis-title").remove();
+  svg2.select(".baseline").remove();
+  svg2.select(".baseline-country").remove();
   // console.log(data.columns.slice(1)[9]); // column header string value for health ***testing***
 
   // console.log(groups)  
@@ -261,6 +268,7 @@ svg2.append("g")
       }); 
       // console.log(CountryToGDP);
 })
+}
 
 // END - Code for second bar chart // 
 
@@ -321,7 +329,7 @@ function updateChartHealthMilitaryTwoPortion() {
 
 
    var yScale2 = d3.scaleLinear()
-    .domain([0, 300,20000])
+    .domain([0, 500])
     .range([height2, 0]);
     svg2.append("g")
     .attr("class", "y-axis")
@@ -358,11 +366,13 @@ function updateChartHealthMilitaryTwoPortion() {
       // enter a second time = loop subgroup per subgroup to add all rectangles
       .data(function(d) { return d; })
       .enter().append("rect")
+        .attr("class", "bar")
         .attr("x", function(d) { return xScale2(d.data.Country); })                                                                     //.attr("x", function(d) { return xScale2(d.data.group); })
         .attr("y", function(d) { return yScale2(d[1]); })
         .attr("height", function(d) { return yScale2(d[0]) - yScale2(d[1]); })
         .attr("width",xScale2.bandwidth())
 
+       
 })
 }
 
