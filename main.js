@@ -229,6 +229,8 @@ svg2.append("g")
       .attr("height", function(d) { return height2 - yScale2(+d["GDP ($USD billions PPP) 2019"]); })
       .attr("fill", "#69b3a2")
       .on("mouseover", function(d) {
+        onClickBaseline(d.Country);
+
         d3.select(this).attr("fill", "red");
         svg2.append("text")
           .attr("class", "bar-label")
@@ -239,6 +241,7 @@ svg2.append("g")
           .text(d.Country);
       })
       .on("mouseout", function(d) {
+        unClickBaseline(d.Country);
         d3.select(this).attr("fill", "#69b3a2");
         svg2.select(".bar-label").remove(); 
       })
@@ -497,12 +500,27 @@ function onClickBaseline(countryName) {// breakpoint
     }
     // d3.select(i).attr("fill", "red");
   })
+
+  svg.selectAll('rect').each(function(d,i) {
+    if (d.Country == countryName) {
+      d3.select(this).attr("fill", "red");
+    }
+    // d3.select(i).attr("fill", "red");
+  })
+
 }
 
 // Let other svg (top, bottom) know that one chart moved away from baseline.
 // back to the green color (which is default)
 function unClickBaseline(countryName) { // breakpoint
   svg2.selectAll('rect').each(function(d,i) {
+    if (d.Country == countryName) {
+      d3.select(this).attr("fill", "#69b3a2");
+    }
+    // d3.select(i).attr("fill", "red");
+  })
+
+  svg.selectAll('rect').each(function(d,i) {
     if (d.Country == countryName) {
       d3.select(this).attr("fill", "#69b3a2");
     }
