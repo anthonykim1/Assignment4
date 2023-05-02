@@ -494,6 +494,12 @@ function updateChartHealth(){
 function onClickBaseline(countryName) {// breakpoint
   // console.log("here");
   // console.log(svg2.selectAll('.rect'));
+  svg.select(".bar-label").remove();
+  svg.select(".baseline").remove();
+  svg.select(".baseline-country").remove();
+  svg2.select(".bar-label").remove();
+  svg2.select(".baseline").remove();
+  svg2.select(".baseline-country").remove();
   svg2.selectAll('rect').each(function(d,i) {
     if (d.Country == countryName) {
       d3.select(this).attr("fill", "red");
@@ -513,6 +519,8 @@ function onClickBaseline(countryName) {// breakpoint
 // Let other svg (top, bottom) know that one chart moved away from baseline.
 // back to the green color (which is default)
 function unClickBaseline(countryName) { // breakpoint
+  
+
   svg2.selectAll('rect').each(function(d,i) {
     if (d.Country == countryName) {
       d3.select(this).attr("fill", "#69b3a2");
