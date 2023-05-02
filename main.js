@@ -106,8 +106,11 @@ d3.csv("dataset.csv").then(function(dataset) {
       .attr("y", function(d) { return yScale(+d["GDP per capita in $ (PPP) 2021"]); })
       .attr("width", xScale.bandwidth())
       .attr("height", function(d) { return height - yScale(+d["GDP per capita in $ (PPP) 2021"]); })
+      .attr("countryName", function(d) { return d.Country}) // new May 2nd => add attribute for countryName so we can highlight both of the charts together 
       .attr("fill", "#69b3a2")
       .on("mouseover", function(d) {
+        onClickBaseline(d.Country); // call to trigger baseline highlighting in both places
+        
         d3.select(this).attr("fill", "red");
         svg.append("text")
           .attr("class", "bar-label")
@@ -118,6 +121,8 @@ d3.csv("dataset.csv").then(function(dataset) {
           .text(d.Country + " " + d["GDP per capita in $ (PPP) 2021"]);
       })
       .on("mouseout", function(d) {
+        unClickBaseline(d.Country); // call to trigger baseline un-highlighting in both places
+
         d3.select(this).attr("fill", "#69b3a2");
         svg.select(".bar-label").remove();
       })
@@ -354,7 +359,7 @@ function updateChartHealthMilitaryTwoPortion() {
   var stackedData = d3.stack()
     .keys(subgroups)
     (data2)
-    console.log(stackedData);
+    // console.log(stackedData);
 
   svg2.append("g")
     .selectAll("g")
@@ -484,6 +489,27 @@ function updateChartHealth(){
           .style("font-size", "10px")
           .text(d.Country);
       });
+}
+
+function onClickBaseline(countryName) {// breakpoint
+  // console.log("here");
+  // console.log(svg2.selectAll('.rect'));
+  svg2.selectAll('rect').each(function(d,i) {
+    if (d.Country == countryName) {
+      d3.select(this).attr("fill", "red");
+    }
+    // d3.select(i).attr("fill", "red");
+  })
+}
+
+function unClickBaseline(countryName) { // breakpoint
+  svg2.selectAll('rect').each(function(d,i) {
+    if (d.Country == countryName) {
+      d3.select(this).attr("fill", "#69b3a2");
+    }
+    // d3.select(i).attr("fill", "red");
+  })
+  
 }
 
 function updateChartGDP(){
