@@ -12,7 +12,7 @@ height2 = 600 - marginTwo.top - marginTwo.bottom; // 400 => 600 testing
 // svg for first bar chart
 var svg = d3.select("#main")
   .append("svg")
-    .attr("width", width + margin.left + margin.right)
+    .attr("width", width2 + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
   .append("g")
     .attr("transform",
@@ -63,7 +63,7 @@ d3.csv(nameOfDataset).then(function(dataset) {
 
   // X axis
   var xScale = d3.scaleBand()
-  .range([ 0, width ])
+  .range([ 0, width2 ])
   .domain(data.map(function(d) { return d.Country; }))
   .padding(0.2);
   targetSVG.append("g")
@@ -131,13 +131,22 @@ d3.csv(nameOfDataset).then(function(dataset) {
           .text(d.Country + " " + d[columnTitle])
       })
       .on("mouseout", function(d) {
-        unClickBaseline(d.Country);
-        d3.select(this).attr("fill", "#69b3a2");
-        targetSVG.select(".bar-label").remove();
+        if (!d3.select(this).classed("bar selected")) {
+          unClickBaseline(d.Country); // call to trigger baseline un-highlighting in both places
+          d3.select(this).attr("fill", "#69b3a2");
+          svg.select(".bar-label").remove();
+        }
       })
       .on("click", function(d){
         targetSVG.select(".baseline").remove();
         targetSVG.select(".baseline-country").remove();
+
+        targetSVG.selectAll(".bar").classed("selected", false);
+        // add the "selected" class to the clicked bar
+        d3.select(this).classed("selected", true);
+        // set the fill color of the selected bar to red
+        targetSVG.selectAll(".bar").attr("fill", "#69b3a2")
+        d3.select(this).attr("fill", "yellow");
 
         baseline_value = yScale(+d[columnTitle]);
         targetSVG.append("line")
@@ -183,7 +192,9 @@ function updateChartTwo(category) {
   if(category === "gdp") {
     createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 4000, "GDP ($USD billions PPP) 2019");
   } else if (category === "healthMilitaryPortion") {
-    createStackedBarChart("2019GDPHealthMilitary.csv", svg2, width2, height2, marginTwo, 500, "GDP ($USD billions PPP) 2019");
+    updateChartHealthMilitaryTwoPortion();
+  } else if (category === "unemployement") {
+    createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 50, "unemployment (%) 2021"); 
   }
 }
 
@@ -311,11 +322,11 @@ function onClickBaseline(countryName, whichSVGToCall) {// breakpoint
   // console.log("here");
   // console.log(svg2.selectAll('.rect'));
   svg.select(".bar-label").remove();
-  svg.select(".baseline").remove();
-  svg.select(".baseline-country").remove();
+  //svg.select(".baseline").remove();
+  //svg.select(".baseline-country").remove();
   svg2.select(".bar-label").remove();
-  svg2.select(".baseline").remove();
-  svg2.select(".baseline-country").remove();
+  //svg2.select(".baseline").remove();
+  //svg2.select(".baseline-country").remove();
 
 if (whichSVGToCall == "svg2") {
   svg2.selectAll('rect').each(function(d,i) {
@@ -330,6 +341,8 @@ if (whichSVGToCall == "svg2") {
       .attr("text-anchor", "middle")
       .style("font-size", "10px")
       .text(d.Country)
+    } else {
+      d3.select(this).attr("fill", "#69b3a2");
     }
     // d3.select(i).attr("fill", "red");
   })
