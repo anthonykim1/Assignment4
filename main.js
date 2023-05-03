@@ -326,7 +326,7 @@ function onClickBaseline(countryName, whichSVGToCall) {// breakpoint
   svg.select(".baseline-country").remove();
   svg2.select(".bar-label").remove();
   svg2.select(".baseline").remove();
-  //svg2.select(".baseline-country").remove();
+  svg2.select(".baseline-country").remove();
 
 if (whichSVGToCall == "svg2") {
   svg2.selectAll('rect').each(function(d,i) {
