@@ -171,7 +171,7 @@ d3.csv("dataset.csv").then(function(data) {
   
   // X axis
   var xScale2 = d3.scaleBand()
-  .range([ 0, width ])
+  .range([ 0, width2 ])
   .domain(data.map(function(d) { return d.Country; }))
   .padding(0.2);
 svg2.append("g")
@@ -200,7 +200,7 @@ svg2.append("g")
     .call(d3.axisLeft(yScale2));
 
     svg2.append("text")
-    .attr("class", ".y-axis-title")
+    .attr("class", "y-axis-title")
     .attr("transform", "rotate(-90)")
     .attr("y", 0 - marginTwo.left)
     .attr("x",0 - (height2 / 2))
@@ -336,9 +336,9 @@ function updateChartHealthMilitaryTwoPortion() {
     .call(d3.axisLeft(yScale2));
 
     svg2.append("text")
-    .attr("class", ".y-axis-title")
+    .attr("class", "y-axis-title")
     .attr("transform", "rotate(-90)")
-    .attr("y", 100 - marginTwo.right)
+    .attr("y", -15 - marginTwo.right)
     .attr("x",0 - (height2 / 2))
     .attr("dy", "1em")
     .style("text-anchor", "middle")
