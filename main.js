@@ -43,6 +43,17 @@ function onCategoryChangedTwo() {
   updateChartTwo(category);
 }
 
+/////////////////// Refactoring in progress
+
+
+
+
+/////////////////// Refactoring in progress
+
+
+
+
+
 
 // This is for First chart - specifically GDP per capita 
 d3.csv("dataset.csv").then(function(dataset) {
@@ -367,19 +378,10 @@ function updateChartHealthMilitaryTwoPortion() {
     // console.log(subgroupValue);
     // Reduce opacity of all rect to 0.2
     d3.selectAll(".myRect").style("opacity", 0.2)
-    // Highlight all rects of this subgroup with opacity 0.8. It is possible to select them since they have a specific class = their name.
-    // svg.selectAll('rect').each(function(d,i) {
-      // svg2.selectAll(".myRect").each(function(d) {
-      //   if (d.key == subgroupName) {
-      //     d.style("opacity", 1)
-      //   }
-      // })
-      temp = d3.selectAll(".myRect").filter("."+subgroupName);
-      temp2 = d3.selectAll(".myRect."+subgroupName);
-
+    
       var taylorMade = subgroupName.replaceAll(' ', '.');
       // console.log(taylorMade);
-      console.log(d3.selectAll(".myRect."+taylorMade));
+      // console.log(d3.selectAll(".myRect."+taylorMade));
       d3.selectAll(".myRect."+taylorMade).style("opacity", 1);
   }
 var mouseleave = function(d) {
