@@ -304,7 +304,7 @@ function updateChartHealthMilitaryTwoPortion() {
 
   data2.sort(function(a, b) {
     // console.log((+a["GDP ($USD billions PPP) 2018"], +b["GDP ($USD billions PPP) 2018"]));
-    return d3.descending(+a["GDP without H and M"], +b["GDP without H and M"]);
+    return d3.descending((+a["GDP without H and M"]) + (+a["health value"]) + (+a["military value"]), (+b["GDP without H and M"]) + (+b["health value"]) + (+b["military value"]));
   });
 
   // let ourHealthColumn = data.columns.slice(1)[9]; // fetch "expenditure % of GDP" 
@@ -818,4 +818,3 @@ function updateChartHealthGDP(){
           .text(d.Country);
       });
 }
-
