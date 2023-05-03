@@ -782,4 +782,3 @@ function updateChartHealthGDP(){
       });
 }
 
-
