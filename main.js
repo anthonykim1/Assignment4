@@ -820,4 +820,3 @@ function updateChartHealthGDP(){
           .text(d.Country);
       });
 }
-
