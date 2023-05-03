@@ -356,12 +356,47 @@ function updateChartHealthMilitaryTwoPortion() {
     (data2)
     // console.log(stackedData);
 
+
+
+  //// animation
+  var mouseover = function(d) {
+    // what subgroup are we hovering?
+    var subgroupName = d3.select(this.parentNode).datum().key; // This was the tricky part
+    console.log(subgroupName);
+    var subgroupValue = d.data[subgroupName];
+    // console.log(subgroupValue);
+    // Reduce opacity of all rect to 0.2
+    d3.selectAll(".myRect").style("opacity", 0.2)
+    // Highlight all rects of this subgroup with opacity 0.8. It is possible to select them since they have a specific class = their name.
+    // svg.selectAll('rect').each(function(d,i) {
+      // svg2.selectAll(".myRect").each(function(d) {
+      //   if (d.key == subgroupName) {
+      //     d.style("opacity", 1)
+      //   }
+      // })
+      temp = d3.selectAll(".myRect").filter("."+subgroupName);
+      temp2 = d3.selectAll(".myRect."+subgroupName);
+
+      var taylorMade = subgroupName.replaceAll(' ', '.');
+      // console.log(taylorMade);
+      console.log(d3.selectAll(".myRect."+taylorMade));
+      d3.selectAll(".myRect."+taylorMade).style("opacity", 1);
+  }
+var mouseleave = function(d) {
+    // Back to normal opacity: 0.8
+    d3.selectAll(".myRect")
+      .style("opacity",0.8)
+    }
+
+  //// animation
+
   svg2.append("g")
     .selectAll("g")
     // Enter in the stack data = loop key per key = group per group
     .data(stackedData)
     .enter().append("g")
       .attr("fill", function(d) { return color(d.key); })
+      .attr("class", function(d){ return "myRect " + d.key }) // 5/3 animation attempt
       .selectAll("rect")
       // enter a second time = loop subgroup per subgroup to add all rectangles
       .data(function(d) { return d; })
@@ -371,7 +406,9 @@ function updateChartHealthMilitaryTwoPortion() {
         .attr("y", function(d) { return yScale2(d[1]); })
         .attr("height", function(d) { return yScale2(d[0]) - yScale2(d[1]); })
         .attr("width",xScale2.bandwidth())
-
+        .attr("stroke", "grey")
+        .on("mouseover", mouseover)
+        .on("mouseleave", mouseleave)
        
 })
 }
