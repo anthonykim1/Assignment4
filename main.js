@@ -12,7 +12,7 @@ height2 = 600 - marginTwo.top - marginTwo.bottom; // 400 => 600 testing
 // svg for first bar chart
 var svg = d3.select("#main")
   .append("svg")
-    .attr("width", width2 + margin.left + margin.right)
+    .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
   .append("g")
     .attr("transform",
@@ -63,7 +63,7 @@ d3.csv(nameOfDataset).then(function(dataset) {
 
   // X axis
   var xScale = d3.scaleBand()
-  .range([ 0, width2 ])
+  .range([ 0, width ])
   .domain(data.map(function(d) { return d.Country; }))
   .padding(0.2);
   targetSVG.append("g")
@@ -192,7 +192,7 @@ function updateChartTwo(category) {
   if(category === "gdp") {
     createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 4000, "GDP ($USD billions PPP) 2019");
   } else if (category === "healthMilitaryPortion") {
-    updateChartHealthMilitaryTwoPortion();
+    createStackedBarChart("2019GDPHealthMilitary.csv", svg2, width2, height2, marginTwo, 500, "GDP ($USD billions PPP) 2019");
   } else if (category === "unemployement") {
     createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 50, "unemployment (%) 2021"); 
   }
@@ -322,11 +322,11 @@ function onClickBaseline(countryName, whichSVGToCall) {// breakpoint
   // console.log("here");
   // console.log(svg2.selectAll('.rect'));
   svg.select(".bar-label").remove();
-  //svg.select(".baseline").remove();
-  //svg.select(".baseline-country").remove();
+  svg.select(".baseline").remove();
+  svg.select(".baseline-country").remove();
   svg2.select(".bar-label").remove();
-  //svg2.select(".baseline").remove();
-  //svg2.select(".baseline-country").remove();
+  svg2.select(".baseline").remove();
+  svg2.select(".baseline-country").remove();
 
 if (whichSVGToCall == "svg2") {
   svg2.selectAll('rect').each(function(d,i) {
