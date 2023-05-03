@@ -2,11 +2,13 @@ var margin = {top: 30, right: 30, bottom: 70, left: 60},
     width = 1000 - margin.left - margin.right,
     height = 400 - margin.top - margin.bottom;
 
-var marginTwo = {top: 30, right: 30, bottom: 70, left: 60},
-width2 = 900 - marginTwo.left - marginTwo.right,
-height2 = 400 - marginTwo.top - marginTwo.bottom;
+// margin for second bar chart
+var marginTwo = {top: 30, right: 30, bottom: 70, left: 90},
+width2 = 2000 - marginTwo.left - marginTwo.right, // 900 => 2000 testing
+height2 = 600 - marginTwo.top - marginTwo.bottom; // 400 => 600 testing
 
 // append the svg object to the body of the page
+// svg for first bar chart
 var svg = d3.select("#main")
   .append("svg")
     .attr("width", width + margin.left + margin.right)
@@ -14,7 +16,7 @@ var svg = d3.select("#main")
   .append("g")
     .attr("transform",
           "translate(" + margin.left + "," + margin.top + ")");
-
+// svg for second bar chart
 var svg2 = d3.select("#second")
 .append("svg")
     .attr("width", width2 + marginTwo.left + marginTwo.right)
@@ -23,6 +25,7 @@ var svg2 = d3.select("#second")
     .attr("transform",
           "translate(" + marginTwo.left + "," + marginTwo.top + ")");
 
+// Drop down choice updated, fire signal to display the "correct" chart for top chart
 function onCategoryChanged() {
   var select = d3.select('#categorySelect').node();
   // Get current value of select element
@@ -31,6 +34,7 @@ function onCategoryChanged() {
   updateChart(category);
 }
 
+// Drop down choice updated, fire signal to display the "correct" chart for bottom chart
 function onCategoryChangedTwo() {
   var select = d3.select('#categorySelectTwo').node();
   // Get current value of select element
@@ -39,7 +43,8 @@ function onCategoryChangedTwo() {
   updateChartTwo(category);
 }
 
-// Parse the Data
+
+// This is for First chart - specifically GDP per capita 
 d3.csv("dataset.csv").then(function(dataset) {
   // sort data
   data = dataset;
@@ -47,8 +52,6 @@ d3.csv("dataset.csv").then(function(dataset) {
   data.sort(function(a, b) {
     return d3.descending(+a["GDP per capita in $ (PPP) 2021"], +b["GDP per capita in $ (PPP) 2021"]);
   });
-
-
 
   // X axis
   xScale = d3.scaleBand()
@@ -63,8 +66,6 @@ d3.csv("dataset.csv").then(function(dataset) {
       .attr("transform", "translate(-10,0)rotate(-45)")
       .style("text-anchor", "end")
       .style("font-size", "5px");
-
-
 
   // Add Y axis
   yScale = d3.scaleLinear()
@@ -84,10 +85,6 @@ d3.csv("dataset.csv").then(function(dataset) {
     .style("text-anchor", "middle")
     .style("font-size", "10px")
     .text("GDP per capita in $ (PPP) 2021");
-
-
-
-
 
   let baseline_value;
  
@@ -109,9 +106,11 @@ d3.csv("dataset.csv").then(function(dataset) {
       })
       .attr("width", xScale.bandwidth())
       .attr("height", function(d) { return height - yScale(+d["GDP per capita in $ (PPP) 2021"]); })
+      .attr("countryName", function(d) { return d.Country}) // new May 2nd => add attribute for countryName so we can highlight both of the charts together 
       .attr("fill", "#69b3a2")
       .on("mouseover", function(d) {
-        console.log(d.Country);
+        onClickBaseline(d.Country, "svg2"); // call to trigger baseline highlighting in both places
+        
         d3.select(this).attr("fill", "red");
         svg.append("text")
           .attr("class", "bar-label")
@@ -122,6 +121,8 @@ d3.csv("dataset.csv").then(function(dataset) {
           .text(d.Country + " " + d["GDP per capita in $ (PPP) 2021"]);
       })
       .on("mouseout", function(d) {
+        unClickBaseline(d.Country); // call to trigger baseline un-highlighting in both places
+
         d3.select(this).attr("fill", "#69b3a2");
         svg.select(".bar-label").remove();
       })
@@ -152,12 +153,12 @@ d3.csv("dataset.csv").then(function(dataset) {
 
 })
 
-// global variable to store Country name to GDP value.
-let CountryToGDP = new Map();
 
-// START - Code for second bar chart, specifically the whole GDP section (should be displayed first as default) //
-// storing of the country name to GDP value initialization also happens here // 
-updateChartGDPWhole();
+
+
+updateChartGDPWhole(); // call it once by default, will be called again when user goes back and forth in the second bar chart.
+
+// Code for second bar chart, specifically the whole GDP section (should be displayed first as default) //
 function updateChartGDPWhole() {
 d3.csv("dataset.csv").then(function(data) {
   svg2.selectAll(".bar").remove();
@@ -166,19 +167,15 @@ d3.csv("dataset.csv").then(function(data) {
   svg2.select(".y-axis-title").remove();
   svg2.select(".baseline").remove();
   svg2.select(".baseline-country").remove();
-  // console.log(data.columns.slice(1)[9]); // column header string value for health ***testing***
-
-  // console.log(groups)  
   
-
+  // sort by highest to lowest using GDP 2019 value.
   data.sort(function(a, b) {
-    // console.log((+a["GDP ($USD billions PPP) 2018"], +b["GDP ($USD billions PPP) 2018"]));
     return d3.descending(+a["GDP ($USD billions PPP) 2019"], +b["GDP ($USD billions PPP) 2019"]);
   });
-  /////////
+  
   // X axis
   var xScale2 = d3.scaleBand()
-  .range([ 0, width ])
+  .range([ 0, width2 ])
   .domain(data.map(function(d) { return d.Country; }))
   .padding(0.2);
 svg2.append("g")
@@ -191,22 +188,23 @@ svg2.append("g")
     .style("font-size", "6px");
 
   
-
+   // attempt for scale break...
     // var yScale2 = d3.scaleLinear()
     // .domain([[0,7000], [7000, 22000]])
     // .scope([[0, 0.5], [0.5,1]])
     // .range([0,100]);
     // svg2.append("g")
     // .call(d3.axisLeft(yScale2));
+
     var yScale2 = d3.scaleLinear()
-    .domain([0, 4000, 22000])
+    .domain([0, 4000, 22000]) // ****** changing the values inside this parenthesis can change the extent of y
     .range([height2, 0]);
     svg2.append("g")
     .attr("class", "y-axis")
     .call(d3.axisLeft(yScale2));
 
     svg2.append("text")
-    .attr("class", ".y-axis-title")
+    .attr("class", "y-axis-title")
     .attr("transform", "rotate(-90)")
     .attr("y", 0 - marginTwo.left)
     .attr("x",0 - (height2 / 2))
@@ -228,8 +226,6 @@ svg2.append("g")
         if(d.Country === "United States") {
           baseline_value = yScale2(+d["GDP ($USD billions PPP) 2019"]);
         }
-        // STORE in MAP: store d.Country to GDP value in our Hashmap for Future access // 
-        CountryToGDP.set(d.Country, +d["GDP ($USD billions PPP) 2019"]);
         return xScale2(d.Country); 
       })
       .attr("y", function(d) { return yScale2(+d["GDP ($USD billions PPP) 2019"]); })
@@ -237,6 +233,8 @@ svg2.append("g")
       .attr("height", function(d) { return height2 - yScale2(+d["GDP ($USD billions PPP) 2019"]); })
       .attr("fill", "#69b3a2")
       .on("mouseover", function(d) {
+        onClickBaseline(d.Country, "svg");
+
         d3.select(this).attr("fill", "red");
         svg2.append("text")
           .attr("class", "bar-label")
@@ -247,6 +245,7 @@ svg2.append("g")
           .text(d.Country);
       })
       .on("mouseout", function(d) {
+        unClickBaseline(d.Country);
         d3.select(this).attr("fill", "#69b3a2");
         svg2.select(".bar-label").remove(); 
       })
@@ -271,20 +270,12 @@ svg2.append("g")
           .style("font-size", "10px")
           .text(d.Country);
       }); 
-      // console.log(CountryToGDP);
+     
 })
 }
 
-// END - Code for second bar chart // 
 
-function updateChartTwo(category) {
-  if(category === "gdp") {
-    updateChartGDPWhole();
-  } else if (category === "healthMilitaryPortion") {
-    updateChartHealthMilitaryTwoPortion();
-  }
-}
-
+// Let us know what we selected from the top dropdown.
 function updateChart(category){
   if(category === "gdp-per-capita") {
     updateChartGDP();
@@ -295,7 +286,16 @@ function updateChart(category){
   }
 }
 
-// update for stacked health in total gdp  **second chart
+// Let us know what we selected from bottom dropdown
+function updateChartTwo(category) {
+  if(category === "gdp") {
+    updateChartGDPWhole();
+  } else if (category === "healthMilitaryPortion") {
+    updateChartHealthMilitaryTwoPortion();
+  }
+}
+
+// Second chart Health & Military Stacked bar chart
 function updateChartHealthMilitaryTwoPortion() {
 
   d3.csv("chartTwoDataset.csv").then(function(data2) {
@@ -312,13 +312,12 @@ function updateChartHealthMilitaryTwoPortion() {
   });
 
   // let ourHealthColumn = data.columns.slice(1)[9]; // fetch "expenditure % of GDP" 
-  // problem 5/1/23 - These are percentage value as a whole. 
+  // problem 5/1/23 - These are percentage value as a whole -> fixed by yun providing new dataset 
   // need to convert into percentage in decimal form and multiple by the gdp to get the rates we want. 
-  // fixed - Store country to GDP in global hashmap so raw value derived from percentages can be calculated later. 
+  
 
-  var subgroups = data2.columns.slice(1);
+  var subgroups = data2.columns.slice(1); // list of health value, military value, GDP without H and M columns.
   // console.log(subgroups);
-  // var groups = d3.map(data, function(d){return(d.group)}).keys()
   var xScale2 = d3.scaleBand()
   .range([ 0, width2 ])
   .domain(data2.map(function(d) { return d.Country; }))
@@ -341,9 +340,9 @@ function updateChartHealthMilitaryTwoPortion() {
     .call(d3.axisLeft(yScale2));
 
     svg2.append("text")
-    .attr("class", ".y-axis-title")
+    .attr("class", "y-axis-title")
     .attr("transform", "rotate(-90)")
-    .attr("y", 0 - marginTwo.left)
+    .attr("y", -15 - marginTwo.right)
     .attr("x",0 - (height2 / 2))
     .attr("dy", "1em")
     .style("text-anchor", "middle")
@@ -359,7 +358,7 @@ function updateChartHealthMilitaryTwoPortion() {
   var stackedData = d3.stack()
     .keys(subgroups)
     (data2)
-    console.log(stackedData);
+    // console.log(stackedData);
 
   svg2.append("g")
     .selectAll("g")
@@ -381,6 +380,9 @@ function updateChartHealthMilitaryTwoPortion() {
 })
 }
 
+
+
+// Top chart Health expenditure per person.
 function updateChartHealth(){
   console.log("update chart Health expenditure");
   svg.selectAll(".bar").remove();
@@ -491,6 +493,78 @@ function updateChartHealth(){
       });
 }
 
+// Let other svg (top,bottom) know that one chart clicked into baseline.
+// make it highlight with red
+function onClickBaseline(countryName, whichSVGToCall) {// breakpoint
+  // console.log("here");
+  // console.log(svg2.selectAll('.rect'));
+  svg.select(".bar-label").remove();
+  svg.select(".baseline").remove();
+  svg.select(".baseline-country").remove();
+  svg2.select(".bar-label").remove();
+  svg2.select(".baseline").remove();
+  svg2.select(".baseline-country").remove();
+
+if (whichSVGToCall == "svg2") {
+  svg2.selectAll('rect').each(function(d,i) {
+    if (d.Country == countryName) {
+      d3.select(this).attr("fill", "red");
+      // d3.select(this).attr('y') ----- example for getting specific attribute
+      // need to show country name too
+      svg2.append("text")
+      .attr("class", "bar-label")
+      .attr("x", d3.select(this).attr('x'))
+      .attr("y", d3.select(this).attr('y'))
+      .attr("text-anchor", "middle")
+      .style("font-size", "10px")
+      .text(d.Country)
+    }
+    // d3.select(i).attr("fill", "red");
+  })
+} else if (whichSVGToCall == "svg") {
+  svg.selectAll('rect').each(function(d,i) {
+    if (d.Country == countryName) {
+      d3.select(this).attr("fill", "red");
+      svg.append("text")
+      .attr("class", "bar-label")
+      .attr("x", d3.select(this).attr('x'))
+      .attr("y", d3.select(this).attr('y'))
+      .attr("text-anchor", "middle")
+      .style("font-size", "10px")
+      .text(d.Country)
+    }
+   
+    
+  })
+}
+  
+
+  
+
+}
+
+// Let other svg (top, bottom) know that one chart moved away from baseline.
+// back to the green color (which is default)
+function unClickBaseline(countryName) { // breakpoint
+  
+
+  svg2.selectAll('rect').each(function(d,i) {
+    if (d.Country == countryName) {
+      d3.select(this).attr("fill", "#69b3a2");
+    }
+    // d3.select(i).attr("fill", "red");
+  })
+
+  svg.selectAll('rect').each(function(d,i) {
+    if (d.Country == countryName) {
+      d3.select(this).attr("fill", "#69b3a2");
+    }
+    // d3.select(i).attr("fill", "red");
+  })
+  
+}
+
+// Top chart GDP Per capita
 function updateChartGDP(){
   console.log("update chart GDP per capita");
   svg.selectAll(".bar").remove();
