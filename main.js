@@ -193,6 +193,8 @@ function updateChartTwo(category) {
     createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 4000, "GDP ($USD billions PPP) 2019");
   } else if (category === "healthMilitaryPortion") {
     updateChartHealthMilitaryTwoPortion();
+  } else if (category === "unemployement") {
+    createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 50, "unemployment (%) 2021"); 
   }
 }
 
