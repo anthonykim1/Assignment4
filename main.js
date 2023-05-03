@@ -106,7 +106,7 @@ d3.csv("dataset.csv").then(function(dataset) {
       .attr("countryName", function(d) { return d.Country}) // new May 2nd => add attribute for countryName so we can highlight both of the charts together 
       .attr("fill", "#69b3a2")
       .on("mouseover", function(d) {
-        onClickBaseline(d.Country); // call to trigger baseline highlighting in both places
+        onClickBaseline(d.Country, "svg2"); // call to trigger baseline highlighting in both places
         
         d3.select(this).attr("fill", "red");
         svg.append("text")
@@ -229,7 +229,7 @@ svg2.append("g")
       .attr("height", function(d) { return height2 - yScale2(+d["GDP ($USD billions PPP) 2019"]); })
       .attr("fill", "#69b3a2")
       .on("mouseover", function(d) {
-        onClickBaseline(d.Country);
+        onClickBaseline(d.Country, "svg");
 
         d3.select(this).attr("fill", "red");
         svg2.append("text")
@@ -491,7 +491,7 @@ function updateChartHealth(){
 
 // Let other svg (top,bottom) know that one chart clicked into baseline.
 // make it highlight with red
-function onClickBaseline(countryName) {// breakpoint
+function onClickBaseline(countryName, whichSVGToCall) {// breakpoint
   // console.log("here");
   // console.log(svg2.selectAll('.rect'));
   svg.select(".bar-label").remove();
@@ -500,19 +500,42 @@ function onClickBaseline(countryName) {// breakpoint
   svg2.select(".bar-label").remove();
   svg2.select(".baseline").remove();
   svg2.select(".baseline-country").remove();
+
+if (whichSVGToCall == "svg2") {
   svg2.selectAll('rect').each(function(d,i) {
     if (d.Country == countryName) {
       d3.select(this).attr("fill", "red");
+      // d3.select(this).attr('y') ----- example for getting specific attribute
+      // need to show country name too
+      svg2.append("text")
+      .attr("class", "bar-label")
+      .attr("x", d3.select(this).attr('x'))
+      .attr("y", d3.select(this).attr('y'))
+      .attr("text-anchor", "middle")
+      .style("font-size", "10px")
+      .text(d.Country)
     }
     // d3.select(i).attr("fill", "red");
   })
-
+} else if (whichSVGToCall == "svg") {
   svg.selectAll('rect').each(function(d,i) {
     if (d.Country == countryName) {
       d3.select(this).attr("fill", "red");
+      svg.append("text")
+      .attr("class", "bar-label")
+      .attr("x", d3.select(this).attr('x'))
+      .attr("y", d3.select(this).attr('y'))
+      .attr("text-anchor", "middle")
+      .style("font-size", "10px")
+      .text(d.Country)
     }
-    // d3.select(i).attr("fill", "red");
+   
+    
   })
+}
+  
+
+  
 
 }
 
