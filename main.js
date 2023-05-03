@@ -50,7 +50,7 @@ d3.csv("dataset.csv").then(function(dataset) {
   data = dataset;
 
   data.sort(function(a, b) {
-    return d3.descending(+a["GDP per capita in $ (PPP) 2021"], +b["GDP per capita in $ (PPP) 2021"]);
+    return d3.descending(+a["GDP ($USD billions PPP) 2019"], +b["GDP ($USD billions PPP) 2019"]);
   });
 
   // X axis
@@ -118,14 +118,23 @@ d3.csv("dataset.csv").then(function(dataset) {
           .text(d.Country + " " + d["GDP per capita in $ (PPP) 2021"]);
       })
       .on("mouseout", function(d) {
-        unClickBaseline(d.Country); // call to trigger baseline un-highlighting in both places
+        if (!d3.select(this).classed("bar selected")) {
+          unClickBaseline(d.Country); // call to trigger baseline un-highlighting in both places
 
-        d3.select(this).attr("fill", "#69b3a2");
-        svg.select(".bar-label").remove();
+          d3.select(this).attr("fill", "#69b3a2");
+          svg.select(".bar-label").remove();
+        }
       })
       .on("click", function(d){
         svg.select(".baseline").remove();
         svg.select(".baseline-country").remove();
+        
+        svg.selectAll(".bar").classed("selected", false);
+        // add the "selected" class to the clicked bar
+        d3.select(this).classed("selected", true);
+        // set the fill color of the selected bar to red
+        svg.selectAll(".bar").attr("fill", "#69b3a2")
+        d3.select(this).attr("fill", "yellow");
 
         baseline_value = yScale(+d["GDP per capita in $ (PPP) 2021"]);
         svg.append("line")
@@ -426,7 +435,7 @@ function updateChartHealth(){
   svg.select(".baseline-country").remove();
 
   data.sort(function(a, b) {
-    return d3.descending(+a["health expenditure per person ($) 2018"], +b["health expenditure per person ($) 2018"]);
+    return d3.descending(+a["GDP ($USD billions PPP) 2019"], +b["GDP ($USD billions PPP) 2019"]);
   });
 
 
@@ -532,11 +541,11 @@ function onClickBaseline(countryName, whichSVGToCall) {// breakpoint
   // console.log("here");
   // console.log(svg2.selectAll('.rect'));
   svg.select(".bar-label").remove();
-  svg.select(".baseline").remove();
-  svg.select(".baseline-country").remove();
+  //svg.select(".baseline").remove();
+  //svg.select(".baseline-country").remove();
   svg2.select(".bar-label").remove();
-  svg2.select(".baseline").remove();
-  svg2.select(".baseline-country").remove();
+  //svg2.select(".baseline").remove();
+  //svg2.select(".baseline-country").remove();
 
 if (whichSVGToCall == "svg2") {
   svg2.selectAll('rect').each(function(d,i) {
@@ -551,6 +560,8 @@ if (whichSVGToCall == "svg2") {
       .attr("text-anchor", "middle")
       .style("font-size", "10px")
       .text(d.Country)
+    } else {
+      d3.select(this).attr("fill", "#69b3a2");
     }
     // d3.select(i).attr("fill", "red");
   })
@@ -608,7 +619,7 @@ function updateChartGDP(){
   svg.selectAll(".baseline-country").remove();
 
   data.sort(function(a, b) {
-    return d3.descending(+a["GDP per capita in $ (PPP) 2021"], +b["GDP per capita in $ (PPP) 2021"]);
+    return d3.descending(+a["GDP ($USD billions PPP) 2019"], +b["GDP ($USD billions PPP) 2019"]);
   });
 
 
@@ -719,7 +730,7 @@ function updateChartHealthGDP(){
   svg.selectAll(".baseline-country").remove();
 
   data.sort(function(a, b) {
-    return d3.descending(+a["GDP per capita in $ (PPP) 2021"], +b["GDP per capita in $ (PPP) 2021"]);
+    return d3.descending(+a["GDP ($USD billions PPP) 2019"], +b["GDP ($USD billions PPP) 2019"]);
   });
 
 
