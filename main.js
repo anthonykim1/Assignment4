@@ -1,3 +1,4 @@
+// python -m http.server 8080       
 var margin = {top: 30, right: 30, bottom: 70, left: 60},
     width = 1000 - margin.left - margin.right,
     height = 400 - margin.top - margin.bottom;
@@ -43,51 +44,45 @@ function onCategoryChangedTwo() {
   updateChartTwo(category);
 }
 
-/////////////////// Refactoring in progress
+/////////////////////////////////////////////////////// Refactoring Completed for bar charts - Caleb: add ur baseline fix here again
+function createBarChart(nameOfDataset, targetSVG, width, height, margin, yDomainScaleForAxis, columnTitle) {
+d3.csv(nameOfDataset).then(function(dataset) {
+  // clear caching 
+  targetSVG.selectAll(".bar").remove();
+  targetSVG.select(".x-axis").remove();
+  targetSVG.select(".y-axis").remove();
+  targetSVG.select(".y-axis-title").remove();
+  targetSVG.select(".baseline").remove();
+  targetSVG.select(".baseline-country").remove();
 
-
-
-
-/////////////////// Refactoring in progress
-
-
-
-
-
-
-// This is for First chart - specifically GDP per capita 
-d3.csv("dataset.csv").then(function(dataset) {
-  // sort data
   data = dataset;
-
-  data.sort(function(a, b) {
-    return d3.descending(+a["GDP per capita in $ (PPP) 2021"], +b["GDP per capita in $ (PPP) 2021"]);
+  // always sort by GDP
+  data.sort(function(a,b) {
+    return d3.descending(+a["GDP ($USD billions PPP) 2019"], +b["GDP ($USD billions PPP) 2019"]);
   });
 
   // X axis
-  xScale = d3.scaleBand()
-    .range([ 0, width ])
-    .domain(data.map(function(d) { return d.Country; }))
-    .padding(0.2);
-  svg.append("g")
-    .attr("class", "x-axis")
-    .attr("transform", "translate(0," + height + ")")
-    .call(d3.axisBottom(xScale))
-    .selectAll("text")
-      .attr("transform", "translate(-10,0)rotate(-45)")
-      .style("text-anchor", "end")
-      .style("font-size", "5px");
+  var xScale = d3.scaleBand()
+  .range([ 0, width ])
+  .domain(data.map(function(d) { return d.Country; }))
+  .padding(0.2);
+  targetSVG.append("g")
+  .attr("class", "x-axis")
+  .attr("transform", "translate(0," + height + ")")
+  .call(d3.axisBottom(xScale))
+  .selectAll("text")
+    .attr("transform", "translate(-10,0)rotate(-45)")
+    .style("text-anchor", "end")
+    .style("font-size", "6px");
 
-  // Add Y axis
-  yScale = d3.scaleLinear()
-    .domain([0, 140000])
-    .range([ height, 0]);
-  svg.append("g")
+  var yScale = d3.scaleLinear()
+    .domain([0, yDomainScaleForAxis]) // ****** changing the values inside this parenthesis can change the extent of y
+    .range([height, 0]);
+    targetSVG.append("g")
     .attr("class", "y-axis")
     .call(d3.axisLeft(yScale));
- 
-  // Add Y axis label
-  svg.append("text")
+
+    targetSVG.append("text")
     .attr("class", "y-axis-title")
     .attr("transform", "rotate(-90)")
     .attr("y", 0 - margin.left)
@@ -95,51 +90,57 @@ d3.csv("dataset.csv").then(function(dataset) {
     .attr("dy", "1em")
     .style("text-anchor", "middle")
     .style("font-size", "10px")
-    .text("GDP per capita in $ (PPP) 2021");
+    .text(columnTitle);
 
   let baseline_value;
- 
-  // Bars
-  svg.selectAll(".bar")
+
+  // Bar starts here
+  targetSVG.selectAll(".bar")
     .data(data)
     .enter()
     .append("rect")
       .attr("class", "bar")
       .attr("x", function(d) {
         if(d.Country === "United States") {
-          baseline_value = yScale(+d["GDP per capita in $ (PPP) 2021"]);
+          baseline_value = yScale(+d[columnTitle]);
         }
         return xScale(d.Country);
       })
-      .attr("y", function(d) { return yScale(+d["GDP per capita in $ (PPP) 2021"]); })
+      .attr("y", function(d) { return yScale(+d[columnTitle]); })
       .attr("width", xScale.bandwidth())
-      .attr("height", function(d) { return height - yScale(+d["GDP per capita in $ (PPP) 2021"]); })
-      .attr("countryName", function(d) { return d.Country}) // new May 2nd => add attribute for countryName so we can highlight both of the charts together 
+      .attr("height", function(d) { return height - yScale(+d[columnTitle]); })
       .attr("fill", "#69b3a2")
       .on("mouseover", function(d) {
-        onClickBaseline(d.Country, "svg2"); // call to trigger baseline highlighting in both places
-        
+        // figure out what we need to also call.. If at top call bottom if at bottom call top
+        var callOther;
+        if (targetSVG == svg || targetSVG === svg) {
+          callOther = "svg2";
+        }else {
+          callOther = "svg";
+        }
+
+        onClickBaseline(d.Country, callOther); 
+
         d3.select(this).attr("fill", "red");
-        svg.append("text")
+        targetSVG.append("text")
           .attr("class", "bar-label")
           .attr("x", xScale(d.Country) + xScale.bandwidth() / 2)
-          .attr("y", yScale(+d["GDP per capita in $ (PPP) 2021"]) - 10)
+          .attr("y", yScale(+d[columnTitle]) - 10)
           .attr("text-anchor", "middle")
           .style("font-size", "10px")
-          .text(d.Country + " " + d["GDP per capita in $ (PPP) 2021"]);
+          .text(d.Country + " " + d[columnTitle])
       })
       .on("mouseout", function(d) {
-        unClickBaseline(d.Country); // call to trigger baseline un-highlighting in both places
-
+        unClickBaseline(d.Country);
         d3.select(this).attr("fill", "#69b3a2");
-        svg.select(".bar-label").remove();
+        targetSVG.select(".bar-label").remove();
       })
       .on("click", function(d){
-        svg.select(".baseline").remove();
-        svg.select(".baseline-country").remove();
+        targetSVG.select(".baseline").remove();
+        targetSVG.select(".baseline-country").remove();
 
-        baseline_value = yScale(+d["GDP per capita in $ (PPP) 2021"]);
-        svg.append("line")
+        baseline_value = yScale(+d[columnTitle]);
+        targetSVG.append("line")
           .attr("class", "baseline")
           .attr("x1", 0)
           .attr("y1", baseline_value)
@@ -147,147 +148,31 @@ d3.csv("dataset.csv").then(function(dataset) {
           .attr("y2", baseline_value)
           .style("stroke", "#999")
           .style("stroke-dasharray", ("3, 3"));
-        svg.append("text")
+        targetSVG.append("text")
           .attr("class", "baseline-country")
           .attr("x", xScale(d.Country) + xScale.bandwidth() / 2)
-          .attr("y", yScale(+d["GDP per capita in $ (PPP) 2021"]) - 10)
+          .attr("y", yScale(+d[columnTitle]) - 10)
           .attr("text-anchor", "middle")
           .style("font-size", "10px")
           .text(d.Country);
       });
-
-
-
-})
-
-
-
-
-updateChartGDPWhole(); // call it once by default, will be called again when user goes back and forth in the second bar chart.
-
-// Code for second bar chart, specifically the whole GDP section (should be displayed first as default) //
-function updateChartGDPWhole() {
-d3.csv("dataset.csv").then(function(data) {
-  svg2.selectAll(".bar").remove();
-  svg2.select(".x-axis").remove();
-  svg2.select(".y-axis").remove();
-  svg2.select(".y-axis-title").remove();
-  svg2.select(".baseline").remove();
-  svg2.select(".baseline-country").remove();
   
-  // sort by highest to lowest using GDP 2019 value.
-  data.sort(function(a, b) {
-    return d3.descending(+a["GDP ($USD billions PPP) 2019"], +b["GDP ($USD billions PPP) 2019"]);
-  });
-  
-  // X axis
-  var xScale2 = d3.scaleBand()
-  .range([ 0, width2 ])
-  .domain(data.map(function(d) { return d.Country; }))
-  .padding(0.2);
-svg2.append("g")
-  .attr("class", "x-axis")
-  .attr("transform", "translate(0," + height2 + ")")
-  .call(d3.axisBottom(xScale2))
-  .selectAll("text")
-    .attr("transform", "translate(-10,0)rotate(-45)")
-    .style("text-anchor", "end")
-    .style("font-size", "6px");
-
-  
-   // attempt for scale break...
-    // var yScale2 = d3.scaleLinear()
-    // .domain([[0,7000], [7000, 22000]])
-    // .scope([[0, 0.5], [0.5,1]])
-    // .range([0,100]);
-    // svg2.append("g")
-    // .call(d3.axisLeft(yScale2));
-
-    var yScale2 = d3.scaleLinear()
-    .domain([0, 4000, 22000]) // ****** changing the values inside this parenthesis can change the extent of y
-    .range([height2, 0]);
-    svg2.append("g")
-    .attr("class", "y-axis")
-    .call(d3.axisLeft(yScale2));
-
-    svg2.append("text")
-    .attr("class", "y-axis-title")
-    .attr("transform", "rotate(-90)")
-    .attr("y", 0 - marginTwo.left)
-    .attr("x",0 - (height2 / 2))
-    .attr("dy", "1em")
-    .style("text-anchor", "middle")
-    .style("font-size", "10px")
-    .text("GDP ($USD billions PPP) 2019");
-
-
-  let baseline_value; 
-  
-  // Bars
-  svg2.selectAll(".bar")
-    .data(data)
-    .enter()
-    .append("rect")
-      .attr("class", "bar")
-      .attr("x", function(d) {
-        if(d.Country === "United States") {
-          baseline_value = yScale2(+d["GDP ($USD billions PPP) 2019"]);
-        }
-        return xScale2(d.Country); 
-      })
-      .attr("y", function(d) { return yScale2(+d["GDP ($USD billions PPP) 2019"]); })
-      .attr("width", xScale2.bandwidth())
-      .attr("height", function(d) { return height2 - yScale2(+d["GDP ($USD billions PPP) 2019"]); })
-      .attr("fill", "#69b3a2")
-      .on("mouseover", function(d) {
-        onClickBaseline(d.Country, "svg");
-
-        d3.select(this).attr("fill", "red");
-        svg2.append("text")
-          .attr("class", "bar-label")
-          .attr("x", xScale2(d.Country) + xScale2.bandwidth() / 2)
-          .attr("y", yScale2(+d["GDP ($USD billions PPP) 2019"]) - 10)
-          .attr("text-anchor", "middle")
-          .style("font-size", "10px")
-          .text(d.Country + " " + d["GDP ($USD billions PPP) 2019"])
-      })
-      .on("mouseout", function(d) {
-        unClickBaseline(d.Country);
-        d3.select(this).attr("fill", "#69b3a2");
-        svg2.select(".bar-label").remove(); 
-      })
-      .on("click", function(d){
-        svg2.select(".baseline").remove(); 
-        svg2.select(".baseline-country").remove(); 
-
-        baseline_value = yScale2(+d["GDP ($USD billions PPP) 2019"]);
-        svg2.append("line")
-          .attr("class", "baseline")
-          .attr("x1", 0)
-          .attr("y1", baseline_value)
-          .attr("x2", width2)
-          .attr("y2", baseline_value)
-          .style("stroke", "#999")
-          .style("stroke-dasharray", ("3, 3"));
-        svg2.append("text")
-          .attr("class", "baseline-country")
-          .attr("x", xScale2(d.Country) + xScale2.bandwidth() / 2)
-          .attr("y", yScale2(+d["GDP ($USD billions PPP) 2019"]) - 10)
-          .attr("text-anchor", "middle")
-          .style("font-size", "10px")
-          .text(d.Country);
-      }); 
-     
 })
 }
+/////////////////////////////////////////////////////// Refactoring completed --- dont touch below this code.
+// function createBarChart(nameOfDataset, targetSVG, width, height, margin, yDomainScaleForAxis, columnTitle) // 
+
+// display 2021 GDP per capita for top chart as default
+createBarChart("dataset.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2021");
+createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 4000, "GDP ($USD billions PPP) 2019");
 
 
 // Let us know what we selected from the top dropdown.
 function updateChart(category){
   if(category === "gdp-per-capita") {
-    updateChartGDP();
+    createBarChart("dataset.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2021");
   } else if (category === "health-expenditure"){
-    updateChartHealth();
+    createBarChart("dataset.csv", svg, width, height, margin, 11000, "health expenditure per person ($) 2018");
   } else {
     updateChartHealthGDP();
   }
@@ -296,12 +181,14 @@ function updateChart(category){
 // Let us know what we selected from bottom dropdown
 function updateChartTwo(category) {
   if(category === "gdp") {
-    updateChartGDPWhole();
+    createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 4000, "GDP ($USD billions PPP) 2019");
   } else if (category === "healthMilitaryPortion") {
     updateChartHealthMilitaryTwoPortion();
   }
 }
 
+
+// this will get refactored - AK will do it.
 // Second chart Health & Military Stacked bar chart
 function updateChartHealthMilitaryTwoPortion() {
 
@@ -315,7 +202,7 @@ function updateChartHealthMilitaryTwoPortion() {
 
   data2.sort(function(a, b) {
     // console.log((+a["GDP ($USD billions PPP) 2018"], +b["GDP ($USD billions PPP) 2018"]));
-    return d3.descending(+a["GDP without H and M"], +b["GDP without H and M"]);
+    return d3.descending((+a["GDP without H and M"]) + (+a["health value"]) + (+a["military value"]), (+b["GDP without H and M"]) + (+b["health value"]) + (+b["military value"]));
   });
 
   // let ourHealthColumn = data.columns.slice(1)[9]; // fetch "expenditure % of GDP" 
@@ -416,118 +303,6 @@ var mouseleave = function(d) {
 }
 
 
-
-// Top chart Health expenditure per person.
-function updateChartHealth(){
-  console.log("update chart Health expenditure");
-  svg.selectAll(".bar").remove();
-  svg.select(".x-axis").remove();
-  svg.select(".y-axis").remove();
-  svg.select(".y-axis-title").remove();
-  svg.select(".baseline").remove();
-  svg.select(".baseline-country").remove();
-
-  data.sort(function(a, b) {
-    return d3.descending(+a["health expenditure per person ($) 2018"], +b["health expenditure per person ($) 2018"]);
-  });
-
-
-
-  // X axis
-  xScale = d3.scaleBand()
-    .range([ 0, width ])
-    .domain(data.map(function(d) { return d.Country; }))
-    .padding(0.2);
-  svg.append("g")
-    .attr("class", "x-axis")
-    .attr("transform", "translate(0," + height + ")")
-    .call(d3.axisBottom(xScale))
-    .selectAll("text")
-      .attr("transform", "translate(-10,0)rotate(-45)")
-      .style("text-anchor", "end")
-      .style("font-size", "5px");
-  // console.log(xScale);
-
-
-  // Add Y axis
-  yScale = d3.scaleLinear()
-    .domain([0, 11000])
-    .range([ height, 0]);
-  svg.append("g")
-    .attr("class", "y-axis")
-    .call(d3.axisLeft(yScale));
- 
-  // Add Y axis label
-  svg.append("text")
-    .attr("class", "y-axis-title")
-    .attr("transform", "rotate(-90)")
-    .attr("y", 0 - margin.left)
-    .attr("x",0 - (height / 2))
-    .attr("dy", "1em")
-    .style("text-anchor", "middle")
-    .style("font-size", "10px")
-    .text("health expenditure per person ($) 2018");
-
-
-
-
-
-  let baseline_value;
- 
- 
-
-  svg.selectAll(".bar")
-    .data(data)
-    .enter()
-    .append("rect")
-      .attr("class", "bar")
-      .attr("x", function(d) {
-        if(d.Country === "United States") {
-          baseline_value = yScale(+d["health expenditure per person ($) 2018"]);
-        }
-        return xScale(d.Country);
-      })
-      .attr("y", function(d) { return yScale(+d["health expenditure per person ($) 2018"]); })
-      .attr("width", xScale.bandwidth())
-      .attr("height", function(d) { return height - yScale(+d["health expenditure per person ($) 2018"]); })
-      .attr("fill", "#69b3a2")
-      .on("mouseover", function(d) {
-        d3.select(this).attr("fill", "red");
-        svg.append("text")
-          .attr("class", "bar-label")
-          .attr("x", xScale(d.Country) + xScale.bandwidth() / 2)
-          .attr("y", yScale(+d["health expenditure per person ($) 2018"]) - 10)
-          .attr("text-anchor", "middle")
-          .style("font-size", "10px")
-          .text(d.Country+ " " + d["health expenditure per person ($) 2018"]);
-      })
-      .on("mouseout", function(d) {
-        d3.select(this).attr("fill", "#69b3a2");
-        svg.select(".bar-label").remove();
-      })
-      .on("click", function(d){
-        svg.select(".baseline").remove();
-        svg.select(".baseline-country").remove();
-
-        baseline_value = yScale(+d["health expenditure per person ($) 2018"]);
-        svg.append("line")
-          .attr("class", "baseline")
-          .attr("x1", 0)
-          .attr("y1", baseline_value)
-          .attr("x2", width)
-          .attr("y2", baseline_value)
-          .style("stroke", "#999")
-          .style("stroke-dasharray", ("3, 3"));
-        svg.append("text")
-          .attr("class", "baseline-country")
-          .attr("x", xScale(d.Country) + xScale.bandwidth() / 2)
-          .attr("y", yScale(+d["health expenditure per person ($) 2018"]) - 10)
-          .attr("text-anchor", "middle")
-          .style("font-size", "10px")
-          .text(d.Country);
-      });
-}
-
 // Let other svg (top,bottom) know that one chart clicked into baseline.
 // make it highlight with red
 function onClickBaseline(countryName, whichSVGToCall) {// breakpoint
@@ -573,9 +348,6 @@ if (whichSVGToCall == "svg2") {
   })
 }
   
-
-  
-
 }
 
 // Let other svg (top, bottom) know that one chart moved away from baseline.
@@ -599,117 +371,7 @@ function unClickBaseline(countryName) { // breakpoint
   
 }
 
-// Top chart GDP Per capita
-function updateChartGDP(){
-  console.log("update chart GDP per capita");
-  svg.selectAll(".bar").remove();
-  svg.selectAll(".x-axis").remove();
-  svg.selectAll(".y-axis").remove();
-  svg.selectAll(".y-axis-title").remove();
-  svg.selectAll(".baseline").remove();
-  svg.selectAll(".baseline-country").remove();
-
-  data.sort(function(a, b) {
-    return d3.descending(+a["GDP per capita in $ (PPP) 2021"], +b["GDP per capita in $ (PPP) 2021"]);
-  });
-
-
-
-  // X axis
-  xScale = d3.scaleBand()
-    .range([ 0, width ])
-    .domain(data.map(function(d) { return d.Country; }))
-    .padding(0.2);
-  svg.append("g")
-    .attr("class", "x-axis")
-    .attr("transform", "translate(0," + height + ")")
-    .call(d3.axisBottom(xScale))
-    .selectAll("text")
-      .attr("transform", "translate(-10,0)rotate(-45)")
-      .style("text-anchor", "end")
-      .style("font-size", "5px");
-
-
-
-  // Add Y axis
-  yScale = d3.scaleLinear()
-    .domain([0, 140000])
-    .range([ height, 0]);
-  svg.append("g")
-    .attr("class", "y-axis")
-    .call(d3.axisLeft(yScale));
- 
-  // Add Y axis label
-  svg.append("text")
-    .attr("class", "y-axis-title")
-    .attr("transform", "rotate(-90)")
-    .attr("y", 0 - margin.left)
-    .attr("x",0 - (height / 2))
-    .attr("dy", "1em")
-    .style("text-anchor", "middle")
-    .style("font-size", "10px")
-    .text("GDP per capita in $ (PPP) 2021");
-
-
-
-
-
-  let baseline_value;
- 
- 
-
-  svg.selectAll(".bar")
-    .data(data)
-    .enter()
-    .append("rect")
-      .attr("class", "bar")
-      .attr("x", function(d) {
-        if(d.Country === "United States") {
-          baseline_value = yScale(+d["GDP per capita in $ (PPP) 2021"]);
-        }
-        return xScale(d.Country);
-      })
-      .attr("y", function(d) { return yScale(+d["GDP per capita in $ (PPP) 2021"]); })
-      .attr("width", xScale.bandwidth())
-      .attr("height", function(d) { return height - yScale(+d["GDP per capita in $ (PPP) 2021"]); })
-      .attr("fill", "#69b3a2")
-      .on("mouseover", function(d) {
-        d3.select(this).attr("fill", "red");
-        svg.append("text")
-          .attr("class", "bar-label")
-          .attr("x", xScale(d.Country) + xScale.bandwidth() / 2)
-          .attr("y", yScale(+d["GDP per capita in $ (PPP) 2021"]) - 10)
-          .attr("text-anchor", "middle")
-          .style("font-size", "10px")
-          .text(d.Country);
-      })
-      .on("mouseout", function(d) {
-        d3.select(this).attr("fill", "#69b3a2");
-        svg.select(".bar-label").remove();
-      })
-      .on("click", function(d){
-        svg.select(".baseline").remove();
-        svg.select(".baseline-country").remove();
-
-        baseline_value = yScale(+d["GDP per capita in $ (PPP) 2021"]);
-        svg.append("line")
-          .attr("class", "baseline")
-          .attr("x1", 0)
-          .attr("y1", baseline_value)
-          .attr("x2", width)
-          .attr("y2", baseline_value)
-          .style("stroke", "#999")
-          .style("stroke-dasharray", ("3, 3"));
-        svg.append("text")
-          .attr("class", "baseline-country")
-          .attr("x", xScale(d.Country) + xScale.bandwidth() / 2)
-          .attr("y", yScale(+d["GDP per capita in $ (PPP) 2021"]) - 10)
-          .attr("text-anchor", "middle")
-          .style("font-size", "10px")
-          .text(d.Country);
-      });
-}
-
+// this will need to get refactored - AK will do it
 function updateChartHealthGDP(){
   console.log("update chart GDP & Health");
  
