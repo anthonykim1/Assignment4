@@ -238,7 +238,7 @@ svg2.append("g")
           .attr("y", yScale2(+d["GDP ($USD billions PPP) 2019"]) - 10)
           .attr("text-anchor", "middle")
           .style("font-size", "10px")
-          .text(d.Country);
+          .text(d.Country + " " + d["GDP ($USD billions PPP) 2019"])
       })
       .on("mouseout", function(d) {
         unClickBaseline(d.Country);
