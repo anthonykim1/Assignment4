@@ -100,16 +100,13 @@ d3.csv("dataset.csv").then(function(dataset) {
         }
         return xScale(d.Country);
       })
-      .attr("y", function(d) { 
-        console.log(d.Country); 
-        return yScale(+d["GDP per capita in $ (PPP) 2021"]); 
-      })
+      .attr("y", function(d) { return yScale(+d["GDP per capita in $ (PPP) 2021"]); })
       .attr("width", xScale.bandwidth())
       .attr("height", function(d) { return height - yScale(+d["GDP per capita in $ (PPP) 2021"]); })
       .attr("countryName", function(d) { return d.Country}) // new May 2nd => add attribute for countryName so we can highlight both of the charts together 
       .attr("fill", "#69b3a2")
       .on("mouseover", function(d) {
-        onClickBaseline(d.Country, "svg2"); // call to trigger baseline highlighting in both places
+        //onClickBaseline(d.Country, "svg2"); // call to trigger baseline highlighting in both places
         
         d3.select(this).attr("fill", "red");
         svg.append("text")
@@ -121,7 +118,7 @@ d3.csv("dataset.csv").then(function(dataset) {
           .text(d.Country + " " + d["GDP per capita in $ (PPP) 2021"]);
       })
       .on("mouseout", function(d) {
-        unClickBaseline(d.Country); // call to trigger baseline un-highlighting in both places
+        //unClickBaseline(d.Country); // call to trigger baseline un-highlighting in both places
 
         d3.select(this).attr("fill", "#69b3a2");
         svg.select(".bar-label").remove();
@@ -129,7 +126,6 @@ d3.csv("dataset.csv").then(function(dataset) {
       .on("click", function(d){
         svg.select(".baseline").remove();
         svg.select(".baseline-country").remove();
-        console.log(d.Country);
 
         baseline_value = yScale(+d["GDP per capita in $ (PPP) 2021"]);
         svg.append("line")
@@ -233,7 +229,7 @@ svg2.append("g")
       .attr("height", function(d) { return height2 - yScale2(+d["GDP ($USD billions PPP) 2019"]); })
       .attr("fill", "#69b3a2")
       .on("mouseover", function(d) {
-        onClickBaseline(d.Country, "svg");
+        //onClickBaseline(d.Country, "svg");
 
         d3.select(this).attr("fill", "red");
         svg2.append("text")
@@ -245,7 +241,7 @@ svg2.append("g")
           .text(d.Country);
       })
       .on("mouseout", function(d) {
-        unClickBaseline(d.Country);
+        //unClickBaseline(d.Country);
         d3.select(this).attr("fill", "#69b3a2");
         svg2.select(".bar-label").remove(); 
       })
@@ -785,5 +781,4 @@ function updateChartHealthGDP(){
           .text(d.Country);
       });
 }
-
 
