@@ -96,6 +96,13 @@ d3.csv(nameOfDataset).then(function(dataset) {
     .text(columnTitle);
 
   let baseline_value;
+  var callOther;
+        if (targetSVG == svg || targetSVG === svg) {
+          callOther = "svg2";
+        }else {
+          callOther = "svg";
+        }
+
 
   // Bar starts here
   targetSVG.selectAll(".bar")
@@ -115,32 +122,32 @@ d3.csv(nameOfDataset).then(function(dataset) {
       .attr("fill", "#69b3a2")
       .on("mouseover", function(d) {
         // figure out what we need to also call.. If at top call bottom if at bottom call top
-        var callOther;
-        if (targetSVG == svg || targetSVG === svg) {
-          callOther = "svg2";
-        }else {
-          callOther = "svg";
-        }
-
+        svg.selectAll("bar-label").remove();
+        svg2.selectAll("bar-label").remove();
+        
         onClickBaseline(d.Country, callOther); 
-
-        d3.select(this).attr("fill", "red");
-        targetSVG.append("text")
-          .attr("class", "bar-label")
-          .attr("x", xScale(d.Country) + xScale.bandwidth() / 2)
-          .attr("y", yScale(+d[columnTitle]) - 10)
-          .attr("text-anchor", "middle")
-          .style("font-size", "10px")
-          .text(d.Country + " " + d[columnTitle])
+        
+        if (!d3.select(this).classed("bar selected")) {
+          d3.select(this).attr("fill", "red");
+          targetSVG.append("text")
+            .attr("class", "bar-label")
+            .attr("x", xScale(d.Country) + xScale.bandwidth() / 2)
+            .attr("y", yScale(+d[columnTitle]) - 10)
+            .attr("text-anchor", "middle")
+            .style("font-size", "10px")
+            .text(d.Country + " " + d[columnTitle])
+        }
       })
       .on("mouseout", function(d) {
         if (!d3.select(this).classed("bar selected")) {
           unClickBaseline(d.Country); // call to trigger baseline un-highlighting in both places
           d3.select(this).attr("fill", "#69b3a2");
-          svg.select(".bar-label").remove();
+          svg.selectAll(".bar-label").remove();
+          svg2.selectAll(".bar-label").remove();
         }
       })
       .on("click", function(d){
+        targetSVG.selectAll("bar-label").remove();
         targetSVG.select(".baseline").remove();
         targetSVG.select(".baseline-country").remove();
 
@@ -166,11 +173,73 @@ d3.csv(nameOfDataset).then(function(dataset) {
           .attr("y", yScale(+d[columnTitle]) - 10)
           .attr("text-anchor", "middle")
           .style("font-size", "10px")
-          .text(d.Country);
+          .text(d.Country + " " + d[columnTitle]);
+        syncBaseline(d.Country, callOther);
       });
   
 })
 }
+
+function syncBaseline(countryName, whichSVGToCall) {
+  if(whichSVGToCall === "svg2") {
+    svg2.selectAll("bar-label").remove(); 
+    svg2.selectAll('rect').each(function(d,i) {
+      if (d.Country === countryName) {
+        svg2.select(".baseline").remove();
+        svg2.select(".baseline-country").remove();
+
+        svg2.selectAll(".bar").classed("selected", false);
+        // add the "selected" class to the clicked bar
+        d3.select(this).classed("selected", true);
+        // set the fill color of the selected bar to red
+        svg2.selectAll(".bar").attr("fill", "#69b3a2")
+
+        d3.select(this).attr("fill", "yellow");
+        // d3.select(this).attr('y') ----- example for getting specific attribute
+        // need to show country name too
+        svg2.append("text")
+        .attr("class", "bar-label")
+        .attr("x", d3.select(this).attr('x'))
+        .attr("y", d3.select(this).attr('y'))
+        .attr("text-anchor", "middle")
+        .style("font-size", "10px")
+        .text(d.Country)
+      } else {
+        d3.select(this).attr("fill", "#69b3a2");
+      }
+      // d3.select(i).attr("fill", "red");
+    })
+  } else {
+    svg.selectAll("bar-label").remove(); 
+    svg.selectAll('rect').each(function(d,i) {
+      if (d.Country === countryName) {
+        svg.select(".baseline").remove();
+        svg.select(".baseline-country").remove();
+
+        svg.selectAll(".bar").classed("selected", false);
+        // add the "selected" class to the clicked bar
+        d3.select(this).classed("selected", true);
+        // set the fill color of the selected bar to red
+        svg.selectAll(".bar").attr("fill", "#69b3a2")
+
+        d3.select(this).attr("fill", "yellow");
+        // d3.select(this).attr('y') ----- example for getting specific attribute
+        // need to show country name too
+        svg.append("text")
+        .attr("class", "bar-label")
+        .attr("x", d3.select(this).attr('x'))
+        .attr("y", d3.select(this).attr('y'))
+        .attr("text-anchor", "middle")
+        .style("font-size", "10px")
+        .text(d.Country)
+      } else {
+        d3.select(this).attr("fill", "#69b3a2");
+      }
+      // d3.select(i).attr("fill", "red");
+    })
+  }
+}
+
 /////////////////////////////////////////////////////// Refactoring completed --- dont touch below this code.
 // function createBarChart(nameOfDataset, targetSVG, width, height, margin, yDomainScaleForAxis, columnTitle) // 
 
@@ -367,15 +436,15 @@ function onClickBaseline(countryName, whichSVGToCall) {// breakpoint
   // console.log("here");
   // console.log(svg2.selectAll('.rect'));
   svg.select(".bar-label").remove();
-  svg.select(".baseline").remove();
-  svg.select(".baseline-country").remove();
+  //svg.select(".baseline").remove();
+  //svg.select(".baseline-country").remove();
   svg2.select(".bar-label").remove();
-  svg2.select(".baseline").remove();
-  svg2.select(".baseline-country").remove();
+  //svg2.select(".baseline").remove();
+  //svg2.select(".baseline-country").remove();
 
 if (whichSVGToCall == "svg2") {
   svg2.selectAll('rect').each(function(d,i) {
-    if (d.Country == countryName) {
+    if (d.Country == countryName && !d3.select(this).classed("bar selected")) {
       d3.select(this).attr("fill", "red");
       // d3.select(this).attr('y') ----- example for getting specific attribute
       // need to show country name too
@@ -387,13 +456,15 @@ if (whichSVGToCall == "svg2") {
       .style("font-size", "10px")
       .text(d.Country)
     } else {
-      d3.select(this).attr("fill", "#69b3a2");
+      if (!d3.select(this).classed("bar selected")) {
+        d3.select(this).attr("fill", "#69b3a2");
+      }
     }
     // d3.select(i).attr("fill", "red");
   })
 } else if (whichSVGToCall == "svg") {
   svg.selectAll('rect').each(function(d,i) {
-    if (d.Country == countryName) {
+    if (d.Country == countryName && !d3.select(this).classed("bar selected")) {
       d3.select(this).attr("fill", "red");
       svg.append("text")
       .attr("class", "bar-label")
