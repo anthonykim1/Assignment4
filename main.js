@@ -158,7 +158,7 @@ d3.csv(nameOfDataset).then(function(dataset) {
         targetSVG.selectAll(".bar").attr("fill", "#69b3a2")
         d3.select(this).attr("fill", "yellow");
 
-        baseline_value = yScale(+d[columnTitle]);
+        baseline_value = yScale(+d[columnTitle]); 
         targetSVG.append("line")
           .attr("class", "baseline")
           .attr("x1", 0)
@@ -198,12 +198,20 @@ function syncBaseline(countryName, whichSVGToCall) {
         // d3.select(this).attr('y') ----- example for getting specific attribute
         // need to show country name too
         svg2.append("text")
-        .attr("class", "bar-label")
+        .attr("class", "baseline-country")
         .attr("x", d3.select(this).attr('x'))
         .attr("y", d3.select(this).attr('y'))
         .attr("text-anchor", "middle")
         .style("font-size", "10px")
         .text(d.Country)
+        svg2.append("line")
+          .attr("class", "baseline")
+          .attr("x1", 0)
+          .attr("y1", d3.select(this).attr('y'))
+          .attr("x2", width)
+          .attr("y2", d3.select(this).attr('y'))
+          .style("stroke", "#999")
+          .style("stroke-dasharray", ("3, 3"));
       } else {
         d3.select(this).attr("fill", "#69b3a2");
       }
@@ -226,12 +234,20 @@ function syncBaseline(countryName, whichSVGToCall) {
         // d3.select(this).attr('y') ----- example for getting specific attribute
         // need to show country name too
         svg.append("text")
-        .attr("class", "bar-label")
+        .attr("class", "baseline-country")
         .attr("x", d3.select(this).attr('x'))
         .attr("y", d3.select(this).attr('y'))
         .attr("text-anchor", "middle")
         .style("font-size", "10px")
         .text(d.Country)
+        svg.append("line")
+          .attr("class", "baseline")
+          .attr("x1", 0)
+          .attr("y1", d3.select(this).attr('y'))
+          .attr("x2", width)
+          .attr("y2", d3.select(this).attr('y'))
+          .style("stroke", "#999")
+          .style("stroke-dasharray", ("3, 3"));
       } else {
         d3.select(this).attr("fill", "#69b3a2");
       }
