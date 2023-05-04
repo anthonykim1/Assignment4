@@ -175,27 +175,59 @@ d3.csv(nameOfDataset).then(function(dataset) {
 createBarChart("dataset.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2021");
 createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 4000, "GDP ($USD billions PPP) 2019");
 
-
+////
+// function updateChart(category){
+//   if(category === "gdp-per-capita") {
+//     createBarChart("dataset.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2021");
+//   } else if (category === "health-expenditure"){
+//     createBarChart("dataset.csv", svg, width, height, margin, 11000, "health expenditure per person ($) 2018");
+//   } else {
+//     createStackedBarChart("2018GDPperCapitaHealth.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2018");
+//   }
+// }
+////
 // Let us know what we selected from the top dropdown.
 function updateChart(category){
-  if(category === "gdp-per-capita") {
+  if(category === "gdp-per-capita-2018-bar") {
+    createBarChart("dataset.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2018");
+  } else if (category === "gdp-per-capita-2019-bar") {
+    createBarChart("dataset.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2019");
+  } else if (category === "gdp-per-capita-2020-bar") {
+    createBarChart("dataset.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2020");
+  } else if (category === "gdp-per-capita-2021-bar") {
     createBarChart("dataset.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2021");
-  } else if (category === "health-expenditure"){
-    createBarChart("dataset.csv", svg, width, height, margin, 11000, "health expenditure per person ($) 2018");
-  } else {
+  } else if (category === "health-gdp-cap-2018-stacked") {
     createStackedBarChart("2018GDPperCapitaHealth.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2018");
+  } else if (category === "health-gdp-cap-2019-stacked") {
+    createStackedBarChart("2019GDPperCapitaHealth.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2019");
   }
 }
 
 // Let us know what we selected from bottom dropdown
+// function updateChartTwo(category) {
+//   if(category === "gdp") {
+//     createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 4000, "GDP ($USD billions PPP) 2019");
+//   } else if (category === "healthMilitaryPortion") {
+//     createStackedBarChart("2019GDPHealthMilitary.csv", svg2, width2, height2, marginTwo, 500, "GDP ($USD billions PPP) 2019");
+//   } else if (category === "unemployement") {
+//     createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 50, "unemployment (%) 2021"); 
+//   }
+// }
+
 function updateChartTwo(category) {
-  if(category === "gdp") {
+  if(category === "GDP-2018-bar") {
+    createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 4000, "GDP ($USD billions PPP) 2018");
+  } else if (category === "GDP-2019-bar") {
     createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 4000, "GDP ($USD billions PPP) 2019");
-  } else if (category === "healthMilitaryPortion") {
+  } else if (category === "GDP-2020-bar") {
+    createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 4000, "GDP ($USD billions PPP) 2020");
+  } else if (category === "GDP-2021-bar") {
+    createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 4000, "GDP ($USD billions PPP) 2021");
+  } else if (category === "health-military-gdp-2019-stacked") {
     createStackedBarChart("2019GDPHealthMilitary.csv", svg2, width2, height2, marginTwo, 500, "GDP ($USD billions PPP) 2019");
-  } else if (category === "unemployement") {
-    createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 50, "unemployment (%) 2021"); 
-  }
+  } else if (category === "health-military-gdp-2021-stacked") {
+    createStackedBarChart("2021GDPHealthMilitary.csv", svg2, width2, height2, marginTwo, 500, "GDP ($USD billions PPP) 2021");
+  } 
 }
 
 ///////////// Refactoring for stacked bar chart in progress ///////////////////
@@ -210,6 +242,7 @@ function createStackedBarChart(nameOfDataset, targetSVG, width, height, margin, 
 
     // addition of gdp depends on top or bottom => Top has two to add, bottom has 3
     if (targetSVG == svg || targetSVG === svg) {
+      console.log("here");
       // add only gdp and health
       data.sort(function(a, b) {
         // console.log((+a["GDP ($USD billions PPP) 2018"], +b["GDP ($USD billions PPP) 2018"]));
@@ -217,10 +250,11 @@ function createStackedBarChart(nameOfDataset, targetSVG, width, height, margin, 
         return d3.descending( (+a["GDPperCapita"]) + (+a["health"]), (+b["GDPperCapita"]) + (+b["health"]))
       });
     } else {
+      console.log("reach here");
       data.sort(function(a, b) {
         // console.log((+a["GDP ($USD billions PPP) 2018"], +b["GDP ($USD billions PPP) 2018"]));
         // GDP column name means gdp - whatever column name
-        return d3.descending( (+a["GDP"]) + (+a["health"]) + (+a["military"]), (+b["GDP"]) + (+b["health"]) + (+a["military"]))
+        return d3.descending( (+a["GDP"]) + (+a["health"]) + (+a["military"]), (+b["GDP"]) + (+b["health"]) + (+b["military"]))
       });
     }
 
