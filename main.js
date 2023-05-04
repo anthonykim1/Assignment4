@@ -1,12 +1,12 @@
 // python -m http.server 8080       
 var margin = {top: 30, right: 30, bottom: 70, left: 60},
-    width = 1000 - margin.left - margin.right,
-    height = 400 - margin.top - margin.bottom;
+    width = 1600 - margin.left - margin.right,
+    height = 350 - margin.top - margin.bottom;
 
 // margin for second bar chart
-var marginTwo = {top: 30, right: 30, bottom: 70, left: 90},
-width2 = 2000 - marginTwo.left - marginTwo.right, // 900 => 2000 testing
-height2 = 600 - marginTwo.top - marginTwo.bottom; // 400 => 600 testing
+var marginTwo = {top: 30, right: 30, bottom: 70, left: 60},
+  width2 = 1600 - marginTwo.left - marginTwo.right, // 900 => 2000 testing
+  height2 = 350 - marginTwo.top - marginTwo.bottom; // 400 => 600 testing
 
 // append the svg object to the body of the page
 // svg for first bar chart

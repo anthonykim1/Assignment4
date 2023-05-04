@@ -15,6 +15,9 @@ body {
     margin: 20px;
 }
 
+#second {
+    margin: 20px;
+}
 
 .filter {
     cursor: pointer;
