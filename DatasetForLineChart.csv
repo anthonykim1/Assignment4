@@ -1,20 +1,4 @@
-"indicator","ISO Country code","GDP 
-($ USD billions PPP) 2018","GDP 
-($ USD billions PPP) 2019","GDP 
-($ USD billions PPP) 2020","GDP 
-($ USD billions PPP) 2021","GDP per capita in $ (PPP) 2018","GDP per capita in $ (PPP) 2019","GDP per capita in $ (PPP) 2020","GDP per capita in $ (PPP) 2021","health expenditure 
-% of GDP 2014","health expenditure 
-% of GDP 2015","health expenditure 
-% of GDP 2016","health expenditure 
-% of GDP 2017","health expenditure 
-% of GDP 2018","health expenditure 
-% of GDP 2019","health expenditure 
-% of GDP 2020","health expenditure 
-% of GDP 2021","health expenditure 
-% of GDP 2021 or latest","health expenditure 
-per person 2015","health expenditure 
-per person 2018","health expenditure 
-per person 2019","unemployment (%) 2018","unemployment (%) 2021","Military Spending as % of GDP 2021","Military Spending as % of GDP 2019"
+"indicator","ISO Country code","GDP ($ USD billions PPP) 2018","GDP ($ USD billions PPP) 2019","GDP ($ USD billions PPP) 2020","GDP ($ USD billions PPP) 2021","GDP per capita in $ (PPP) 2018","GDP per capita in $ (PPP) 2019","GDP per capita in $ (PPP) 2020","GDP per capita in $ (PPP) 2021","health expenditure % of GDP 2014","health expenditure % of GDP 2015","health expenditure % of GDP 2016","health expenditure % of GDP 2017","health expenditure % of GDP 2018","health expenditure % of GDP 2019","health expenditure % of GDP 2020","health expenditure % of GDP 2021","health expenditure % of GDP 2021 or latest","health expenditure per person 2015","health expenditure per person 2018","health expenditure per person 2019","unemployment (%) 2018","unemployment (%) 2021","Military Spending as % of GDP 2021","Military Spending as % of GDP 2019"
 "Afghanistan","AFG","75.60","78.60","76.70","75.60","2,082","2,152","2,078","2,105","3.70","3.26","3.51","3.37","3.20","3.21","0","0","3.21","184","70","65.80","8.50","13.28","0.00%","1.20%"
 "Albania","ALB","38.20","39","37.60","40.80","13,498","13,999","13,632","15,646","3.05","3.44","3.96","3.61","0","3.92","3.10","0","3.92","774","274.90","0","16.30","11.82","1.42%","1.30%"
 "Algeria","DZA","491.10","496.10","470.80","488.90","11,909","12,008","11,323","12,037","0","0","7.34","6.51","5.87","6.10","0","0","6.10","1,031","256","248.20","11.20","12.70","5.59%","6.00%"
