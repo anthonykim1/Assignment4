@@ -57,8 +57,11 @@ d3.csv(nameOfDataset).then(function(dataset) {
 
   data = dataset;
   // always sort by GDP
+  let tempColumnTitle = columnTitle
+  var yearSplitter = tempColumnTitle.split(/(\s+)/).slice(-1);
+  
   data.sort(function(a,b) {
-    return d3.descending(+a["GDP ($USD billions PPP) 2019"], +b["GDP ($USD billions PPP) 2019"]);
+    return d3.descending(+a["GDP ($USD billions PPP) "+yearSplitter], +b["GDP ($USD billions PPP) "+yearSplitter]);
   });
 
   // X axis
