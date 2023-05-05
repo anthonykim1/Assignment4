@@ -141,7 +141,7 @@ d3.csv(nameOfDataset).then(function(dataset) {
       })
       .on("mouseout", function(d) {
         if (!d3.select(this).classed("bar selected")) {
-          unClickBaseline(d.Country); // call to trigger baseline un-highlighting in both places
+          unClickBaseline(d.Country, callOther); // call to trigger baseline un-highlighting in both places
           d3.select(this).attr("fill", "#69b3a2");
           svg.selectAll(".bar-label").remove();
           svg2.selectAll(".bar-label").remove();
@@ -182,7 +182,7 @@ d3.csv(nameOfDataset).then(function(dataset) {
 }
 
 function syncBaseline(countryName, whichSVGToCall) {
-  if(whichSVGToCall === "svg2" && !stackedExists) {
+  if(whichSVGToCall === "svg2" && !stackedExists2) {
     svg2.selectAll("bar-label").remove(); 
     svg2.selectAll('rect').each(function(d,i) {
       if (d.Country === countryName) {
@@ -218,7 +218,7 @@ function syncBaseline(countryName, whichSVGToCall) {
       }
       // d3.select(i).attr("fill", "red");
     })
-  } else if(!stackedExists){
+  } else if(whichSVGToCall === "svg" && !stackedExists1){
     svg.selectAll("bar-label").remove(); 
     svg.selectAll('rect').each(function(d,i) {
       if (d.Country === countryName) {
@@ -519,12 +519,10 @@ function onClickBaseline(countryName, whichSVGToCall) {// breakpoint
   svg2.select(".bar-label").remove();
   //svg2.select(".baseline").remove();
   //svg2.select(".baseline-country").remove();
-  if(stackedExists1){
+  if(stackedExists1 && whichSVGToCall == "svg2"){
     svg2.selectAll('rect').each(function(d,i) {
       if (d.Country == countryName && !d3.select(this).classed("bar selected")) {
         d3.select(this).attr("fill", "red");
-        // d3.select(this).attr('y') ----- example for getting specific attribute
-        // need to show country name too
         svg2.append("text")
         .attr("class", "bar-label")
         .attr("x", d3.select(this).attr('x'))
@@ -539,7 +537,7 @@ function onClickBaseline(countryName, whichSVGToCall) {// breakpoint
       }
       // d3.select(i).attr("fill", "red");
     })
-  } else if(stackedExists2){
+  } else if(stackedExists2 && whichSVGToCall == "svg"){
     svg.selectAll('rect').each(function(d,i) {
       if (d.Country == countryName && !d3.select(this).classed("bar selected")) {
         d3.select(this).attr("fill", "red");
@@ -550,10 +548,15 @@ function onClickBaseline(countryName, whichSVGToCall) {// breakpoint
         .attr("text-anchor", "middle")
         .style("font-size", "10px")
         .text(d.Country)
+      } else {
+        if (!d3.select(this).classed("bar selected")) {
+          //d3.select(this).attr("fill", "#69b3a2");
+        }
       }
     })
-  }else {
+  }else if((stackedExists1 && whichSVGToCall == "svg") || (stackedExists2 && whichSVGToCall == "svg2")){
 
+  } else {
     if (whichSVGToCall == "svg2") {
       svg2.selectAll('rect').each(function(d,i) {
         if (d.Country == countryName && !d3.select(this).classed("bar selected")) {
@@ -586,8 +589,6 @@ function onClickBaseline(countryName, whichSVGToCall) {// breakpoint
           .style("font-size", "10px")
           .text(d.Country)
         }
-      
-        
       })
     }
   }
@@ -596,22 +597,10 @@ function onClickBaseline(countryName, whichSVGToCall) {// breakpoint
 
 // Let other svg (top, bottom) know that one chart moved away from baseline.
 // back to the green color (which is default)
-function unClickBaseline(countryName) { // breakpoint
+function unClickBaseline(countryName, whichSVGToCall) { // breakpoint
   
-  if(stackedExists) {
-    svg2.selectAll('rect').each(function(d,i) {
-      if (d.Country == countryName) {
-        d3.select(this).attr("fill", "#69b3a2");
-      }
-      // d3.select(i).attr("fill", "red");
-    })
-  
-    svg.selectAll('rect').each(function(d,i) {
-      if (d.Country == countryName) {
-        d3.select(this).attr("fill", "#69b3a2");
-      }
-      // d3.select(i).attr("fill", "red");
-    })
+  if((whichSVGToCall == "svg" && stackedExists1) || (whichSVGToCall == "svg2" && stackedExists2)) {
+    
   } else {
     svg2.selectAll('rect').each(function(d,i) {
       if (d.Country == countryName) {
