@@ -282,30 +282,32 @@ createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 4000, "GDP ($USD
 // }
 ////
 // Let us know what we selected from the top dropdown.
+var stackedExists1 = false; 
+var stackedExists2 = false; 
 function updateChart(category){
   if(category === "gdp-per-capita-2018-bar") {
-    stackedExists = false; 
+    stackedExists1 = false; 
     createBarChart("dataset.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2018");
   } else if (category === "gdp-per-capita-2019-bar") {
-    stackedExists = false; 
+    stackedExists1 = false; 
     createBarChart("dataset.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2019");
   } else if (category === "gdp-per-capita-2020-bar") {
-    stackedExists = false; 
+    stackedExists1 = false; 
     createBarChart("dataset.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2020");
   } else if (category === "gdp-per-capita-2021-bar") {
-    stackedExists = false; 
+    stackedExists1 = false; 
     createBarChart("dataset.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2021");
   } else if (category === "health-gdp-cap-2018-stacked") {
-    stackedExists = true; 
+    stackedExists1 = true; 
     createStackedBarChart("2018GDPperCapitaHealth.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2018");
   } else if (category === "health-gdp-cap-2019-stacked") {
-    stackedExists = true; 
+    stackedExists1 = true; 
     createStackedBarChart("2019GDPperCapitaHealth.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2019");
   } else if (category === "health-2018-bar") {
-    stackedExists = false; 
+    stackedExists1 = false; 
     createBarChart("dataset.csv", svg, width, height, margin, 11000, "health expenditure per person ($) 2018");
   } else if (category === "health-2019-bar") {
-    stackedExists = false; 
+    stackedExists1 = false; 
     createBarChart("dataset.csv", svg, width, height, margin, 11000, "health expenditure per person ($) 2019");
   }
 }
@@ -323,28 +325,28 @@ function updateChart(category){
 
 function updateChartTwo(category) {
   if(category === "GDP-2018-bar") {
-    stackedExists = false; 
+    stackedExists2 = false; 
     createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 4000, "GDP ($USD billions PPP) 2018");
   } else if (category === "GDP-2019-bar") {
-    stackedExists = false; 
+    stackedExists2 = false; 
     createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 4000, "GDP ($USD billions PPP) 2019");
   } else if (category === "GDP-2020-bar") {
-    stackedExists = false; 
+    stackedExists2 = false; 
     createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 4000, "GDP ($USD billions PPP) 2020");
   } else if (category === "GDP-2021-bar") {
-    stackedExists = false; 
+    stackedExists2 = false; 
     createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 4000, "GDP ($USD billions PPP) 2021");
   } else if (category === "health-military-gdp-2019-stacked") {
-    stackedExists = true; 
+    stackedExists2 = true; 
     createStackedBarChart("2019GDPHealthMilitary.csv", svg2, width2, height2, marginTwo, 500, "GDP ($USD billions PPP) 2019");
   } else if (category === "health-military-gdp-2021-stacked") {
-    stackedExists = true; 
+    stackedExists2 = true; 
     createStackedBarChart("2021GDPHealthMilitary.csv", svg2, width2, height2, marginTwo, 500, "GDP ($USD billions PPP) 2021");
   } else if (category === "unemployement-2021-bar") {
-    stackedExists = false; 
+    stackedExists2 = false; 
     createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 50, "unemployment (%) 2021"); 
   } else if (category === "unemployement-2018-bar") {
-    stackedExists = false; 
+    stackedExists2 = false; 
     createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 50, "unemployment (%) 2018"); 
   }
 }
@@ -358,6 +360,13 @@ function createStackedBarChart(nameOfDataset, targetSVG, width, height, margin, 
     targetSVG.select(".y-axis-title").remove();
     targetSVG.select(".baseline").remove();
     targetSVG.select(".baseline-country").remove();
+
+    var callOther;
+        if (targetSVG == svg || targetSVG === svg) {
+          callOther = "svg2";
+        }else {
+          callOther = "svg";
+        }
 
     // addition of gdp depends on top or bottom => Top has two to add, bottom has 3
     if (targetSVG == svg || targetSVG === svg) {
@@ -460,8 +469,38 @@ function createStackedBarChart(nameOfDataset, targetSVG, width, height, margin, 
           .attr("height", function(d) { return yScale(d[0]) - yScale(d[1]); })
           .attr("width",xScale.bandwidth())
           .attr("stroke", "grey")
-          .on("mouseover", mouseover)
-          .on("mouseleave", mouseleave)
+          .on("mouseover", function(d){
+            svg.selectAll("bar-label").remove(); 
+            svg2.selectAll("bar-label").remove(); 
+            // what subgroup are we hovering?
+            var subgroupName = d3.select(this.parentNode).datum().key; // This was the tricky part
+            // console.log(subgroupName);
+            var subgroupValue = d.data[subgroupName];
+            // console.log(subgroupValue);
+            // Reduce opacity of all rect to 0.2
+            d3.selectAll(".myRect").style("opacity", 0.3)
+          
+            var taylorMade = subgroupName.replaceAll(' ', '.');
+            // console.log(taylorMade);
+            // console.log(d3.selectAll(".myRect."+taylorMade));
+            d3.selectAll(".myRect."+taylorMade).style("opacity", 0.7);
+            targetSVG.append("text")
+              .attr("class", "bar-label")
+              .attr("x", xScale(d.data.Country))
+              .attr("y", yScale(d[1]))
+              .attr("text-anchor", "middle")
+              .style("font-size", "10px")
+              .text(d.data.Country);
+
+            onClickBaseline(d.data.Country, callOther); 
+          })
+          .on("mouseleave", function(d){
+            // Back to normal opacity: 0.8
+            
+            d3.selectAll(".myRect")
+            .style("opacity",1)
+            unClickBaseline(d.data.Country, callOther);
+          })
 
   })
 }
@@ -480,9 +519,40 @@ function onClickBaseline(countryName, whichSVGToCall) {// breakpoint
   svg2.select(".bar-label").remove();
   //svg2.select(".baseline").remove();
   //svg2.select(".baseline-country").remove();
-  if(stackedExists){
-
-  } else {
+  if(stackedExists1){
+    svg2.selectAll('rect').each(function(d,i) {
+      if (d.Country == countryName && !d3.select(this).classed("bar selected")) {
+        d3.select(this).attr("fill", "red");
+        // d3.select(this).attr('y') ----- example for getting specific attribute
+        // need to show country name too
+        svg2.append("text")
+        .attr("class", "bar-label")
+        .attr("x", d3.select(this).attr('x'))
+        .attr("y", d3.select(this).attr('y'))
+        .attr("text-anchor", "middle")
+        .style("font-size", "10px")
+        .text(d.Country)
+      } else {
+        if (!d3.select(this).classed("bar selected")) {
+          //d3.select(this).attr("fill", "#69b3a2");
+        }
+      }
+      // d3.select(i).attr("fill", "red");
+    })
+  } else if(stackedExists2){
+    svg.selectAll('rect').each(function(d,i) {
+      if (d.Country == countryName && !d3.select(this).classed("bar selected")) {
+        d3.select(this).attr("fill", "red");
+        svg.append("text")
+        .attr("class", "bar-label")
+        .attr("x", d3.select(this).attr('x'))
+        .attr("y", d3.select(this).attr('y'))
+        .attr("text-anchor", "middle")
+        .style("font-size", "10px")
+        .text(d.Country)
+      }
+    })
+  }else {
 
     if (whichSVGToCall == "svg2") {
       svg2.selectAll('rect').each(function(d,i) {
@@ -529,7 +599,19 @@ function onClickBaseline(countryName, whichSVGToCall) {// breakpoint
 function unClickBaseline(countryName) { // breakpoint
   
   if(stackedExists) {
-
+    svg2.selectAll('rect').each(function(d,i) {
+      if (d.Country == countryName) {
+        d3.select(this).attr("fill", "#69b3a2");
+      }
+      // d3.select(i).attr("fill", "red");
+    })
+  
+    svg.selectAll('rect').each(function(d,i) {
+      if (d.Country == countryName) {
+        d3.select(this).attr("fill", "#69b3a2");
+      }
+      // d3.select(i).attr("fill", "red");
+    })
   } else {
     svg2.selectAll('rect').each(function(d,i) {
       if (d.Country == countryName) {
