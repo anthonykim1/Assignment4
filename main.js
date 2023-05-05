@@ -254,8 +254,14 @@ function syncBaseline(countryName, whichSVGToCall) {
       }
       // d3.select(i).attr("fill", "red");
     })
+  } else if(stackedExists){
+    if(whichSVGToCall === "svg2") {
+
+    }
   }
 }
+
+//<rect class="bar" x="400.4707233065442" y="39.03000000000001" height="199.655" width="6.934557979334098" stroke="grey"></rect>
 
 /////////////////////////////////////////////////////// Refactoring completed --- dont touch below this code.
 // function createBarChart(nameOfDataset, targetSVG, width, height, margin, yDomainScaleForAxis, columnTitle) // 
@@ -415,25 +421,25 @@ function createStackedBarChart(nameOfDataset, targetSVG, width, height, margin, 
       // console.log(stackedData);
 
         //// animation
-  //   var mouseover = function(d) {
-  //     // what subgroup are we hovering?
-  //     var subgroupName = d3.select(this.parentNode).datum().key; // This was the tricky part
-  //     // console.log(subgroupName);
-  //     var subgroupValue = d.data[subgroupName];
-  //     // console.log(subgroupValue);
-  //     // Reduce opacity of all rect to 0.2
-  //     d3.selectAll(".myRect").style("opacity", 0.2)
+    var mouseover = function(d) {
+      // what subgroup are we hovering?
+      var subgroupName = d3.select(this.parentNode).datum().key; // This was the tricky part
+      // console.log(subgroupName);
+      var subgroupValue = d.data[subgroupName];
+      // console.log(subgroupValue);
+      // Reduce opacity of all rect to 0.2
+      d3.selectAll(".myRect").style("opacity", 0.2)
       
-  //       var taylorMade = subgroupName.replaceAll(' ', '.');
-  //       // console.log(taylorMade);
-  //       // console.log(d3.selectAll(".myRect."+taylorMade));
-  //       d3.selectAll(".myRect."+taylorMade).style("opacity", 1);
-  //   }
-  // var mouseleave = function(d) {
-  //     // Back to normal opacity: 0.8
-  //     d3.selectAll(".myRect")
-  //       .style("opacity",0.8)
-  //     }
+        var taylorMade = subgroupName.replaceAll(' ', '.');
+        // console.log(taylorMade);
+        // console.log(d3.selectAll(".myRect."+taylorMade));
+        d3.selectAll(".myRect."+taylorMade).style("opacity", 1);
+    }
+  var mouseleave = function(d) {
+      // Back to normal opacity: 0.8
+      d3.selectAll(".myRect")
+        .style("opacity",0.8)
+      }
 
 //// animation
   
@@ -454,12 +460,8 @@ function createStackedBarChart(nameOfDataset, targetSVG, width, height, margin, 
           .attr("height", function(d) { return yScale(d[0]) - yScale(d[1]); })
           .attr("width",xScale.bandwidth())
           .attr("stroke", "grey")
-          .on("mouseover", function(d){
-            console.log(d.data.Country); 
-          })
-          .on("mouseleave", function(d){
-            console.log(d.data.Country + " left"); 
-          })
+          .on("mouseover", mouseover)
+          .on("mouseleave", mouseleave)
 
   })
 }
