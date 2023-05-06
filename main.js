@@ -69,20 +69,19 @@ function displayLineChart(countryName) {
       title = 'Health Expenditure Change';
     } else {
       data = [
-        { year: 2018, gdp: parseFloat(countryData[0]['GDP ($ USD billions PPP) 2018'].replaceAll(',','')) },
-        { year: 2019, gdp: parseFloat(countryData[0]['GDP ($ USD billions PPP) 2019'].replaceAll(',','')) },
-        { year: 2020, gdp: parseFloat(countryData[0]['GDP ($ USD billions PPP) 2020'].replaceAll(',','')) },
-        { year: 2021, gdp: parseFloat(countryData[0]['GDP ($ USD billions PPP) 2021'].replaceAll(',','')) }
+        { year: '2018', gdp: parseFloat(countryData[0]['GDP ($ USD billions PPP) 2018'].replaceAll(',','')) },
+        { year: '2019', gdp: parseFloat(countryData[0]['GDP ($ USD billions PPP) 2019'].replaceAll(',','')) },
+        { year: '2020', gdp: parseFloat(countryData[0]['GDP ($ USD billions PPP) 2020'].replaceAll(',','')) },
+        { year: '2021', gdp: parseFloat(countryData[0]['GDP ($ USD billions PPP) 2021'].replaceAll(',','')) }
       ];
       title = 'GDP Change';
     }
 
+    // Convert 0's to null
     data = data.map(d => ({
       year: d.year,
       gdp: d.gdp === 0 ? null : +d.gdp
     }));
-
-    console.log(data);
 
     // Define the scales and axes for the graph
     var xScale = d3.scaleLinear()
@@ -96,9 +95,9 @@ function displayLineChart(countryName) {
 
     var xAxis;
     if (isGDP) {
-      xAxis = d3.axisBottom(xScale).tickFormat(d => d.toLocaleString('en-US',{maximumFractionDigits:0})).ticks(4);
+      xAxis = d3.axisBottom(xScale).ticks(4).tickFormat(d3.format("d"));
     } else {
-      xAxis = d3.axisBottom(xScale).tickFormat(d => d.toLocaleString('en-US',{maximumFractionDigits:0})).ticks(8);
+      xAxis = d3.axisBottom(xScale).ticks(8).tickFormat(d3.format("d"));
     }
     var yAxis = d3.axisLeft(yScale);
 
