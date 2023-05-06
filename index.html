@@ -38,8 +38,22 @@
                 <option value="health-gdp-cap-2018-stacked">GDP per capita & Health Expenditure 2018</option>
                 <option value="health-gdp-cap-2019-stacked">GDP per capita & Health Expenditure 2019</option>
               </select>
-              <br>
-            <br>
+          <label for="sortingSelect">Sort by: </label>
+            <select class="custom-select" id="categorySelectSorting" onchange="onSortingCategoryChanged()">
+              <option selected value="GDP ($USD billions PPP) 2018">GDP 2018</option>
+              <option value="GDP ($USD billions PPP) 2019">GDP 2019</option>
+              <option value="GDP ($USD billions PPP) 2020">GDP 2020</option>
+              <option value="GDP ($USD billions PPP) 2021">GDP 2021</option>
+              <option value="unemployment (%) 2018">Unemployment 2018</option>
+              <option value="unemployment (%) 2021">Unemployment 2021</option>
+              <option value="GDP per capita in $ (PPP) 2018">GDP per Capita 2018</option>
+              <option value="GDP per capita in $ (PPP) 2019">GDP Per Capita 2019</option>
+              <option value="GDP per capita in $ (PPP) 2020">GDP Per Capita 2020</option>
+              <option value="GDP per capita in $ (PPP) 2021">GDP Per Capita 2021</option>
+              <option value="health expenditure per person ($) 2018">Health Expenditure 2018</option>
+              <option value="health expenditure per person ($) 2019">Health Expenditure 2019</option>
+            </select>
+      <br>
     </div>
 
 </body>

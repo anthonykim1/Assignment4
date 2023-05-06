@@ -26,7 +26,17 @@ var svg2 = d3.select("#second")
     .attr("transform",
           "translate(" + marginTwo.left + "," + marginTwo.top + ")");
 
+var sortingValue = "GDP ($USD billions PPP) 2018"; // used to determine what the bar chart is sorted on
+
 var stackedExists = false; 
+function onSortingCategoryChanged(){
+    var selectElement = document.getElementById("categorySelectSorting");
+    var category = selectElement.value;
+
+    sortingValue = category; 
+    onCategoryChanged(); 
+    onCategoryChangedTwo();
+}
 // Drop down choice updated, fire signal to display the "correct" chart for top chart
 function onCategoryChanged() {
   var select = d3.select('#categorySelect').node();
@@ -62,7 +72,8 @@ d3.csv(nameOfDataset).then(function(dataset) {
   var yearSplitter = tempColumnTitle.split(/(\s+)/).slice(-1);
   
   data.sort(function(a,b) {
-    return d3.descending(+a["GDP ($USD billions PPP) "+yearSplitter], +b["GDP ($USD billions PPP) "+yearSplitter]);
+    console.log(sortingValue);
+    return d3.descending(+a[sortingValue], +b[sortingValue]);
   });
 
   // X axis
