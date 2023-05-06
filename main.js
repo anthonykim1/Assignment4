@@ -50,6 +50,7 @@ function displayLineChart(countryName) {
     svg3.select(".title").remove();
     svg3.select(".line").remove();
     var countryData = csvdata.filter((d) => d["indicator"] === countryName);
+
     // Define the data for the GDP values
     var data;
     var isGDP = true;
@@ -75,6 +76,13 @@ function displayLineChart(countryName) {
       ];
       title = 'GDP Change';
     }
+
+    data = data.map(d => ({
+      year: d.year,
+      gdp: d.gdp === 0 ? null : +d.gdp
+    }));
+
+    console.log(data);
 
     // Define the scales and axes for the graph
     var xScale = d3.scaleLinear()
@@ -117,7 +125,8 @@ function displayLineChart(countryName) {
     // Define the line generator
     var line = d3.line()
       .x(d => xScale(d.year))
-      .y(d => yScale(d.gdp));
+      .y(d => yScale(d.gdp))
+      .defined(d => d.gdp !== null);
 
     // Draw the line for the GDP values
     svg3.append("path")
