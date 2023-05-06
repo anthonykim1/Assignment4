@@ -26,6 +26,111 @@ var svg2 = d3.select("#second")
     .attr("transform",
           "translate(" + marginTwo.left + "," + marginTwo.top + ")");
 
+// ------------------------------ Line Chart ------------------------------
+var currentCategory = 'GDP_Per_Capita in $ (PPP) 2018';
+var title = '';
+  // Set up the SVG element
+var svgWidth = 300;
+var svgHeight = 150;
+var margin3 = { top: 20, right: 20, bottom: 30, left: 50 };
+var width3 = svgWidth - margin3.left - margin3.right;
+var height3 = svgHeight - margin3.top - margin3.bottom;
+var svg3 = svg.append("svg")
+  .attr('class', 'lineC')
+  .attr("x", width - 300)
+  .attr("y", 0)
+  .append("g")
+  .attr("transform", "translate(" + margin3.left + "," + margin3.top + ")");
+
+// display line chart
+function displayLineChart(countryName) {
+  d3.csv('DatasetForLineChart.csv').then(csvdata => {
+    svg3.select(".xAxis").remove();
+    svg3.select(".yAxis").remove();
+    svg3.select(".title").remove();
+    svg3.select(".line").remove();
+    var countryData = csvdata.filter((d) => d["indicator"] === countryName);
+    // Define the data for the GDP values
+    var data;
+    var isGDP = true;
+    if (currentCategory === 'health-2018-bar' || currentCategory === 'health-2019-bar') {
+      data = [
+        { year: 2014, gdp: parseFloat(countryData[0]['health expenditure % of GDP 2014']) },
+        { year: 2015, gdp: parseFloat(countryData[0]['health expenditure % of GDP 2015']) },
+        { year: 2016, gdp: parseFloat(countryData[0]['health expenditure % of GDP 2016']) },
+        { year: 2017, gdp: parseFloat(countryData[0]['health expenditure % of GDP 2017']) },
+        { year: 2018, gdp: parseFloat(countryData[0]['health expenditure % of GDP 2018']) },
+        { year: 2019, gdp: parseFloat(countryData[0]['health expenditure % of GDP 2019']) },
+        { year: 2020, gdp: parseFloat(countryData[0]['health expenditure % of GDP 2020']) },
+        { year: 2021, gdp: parseFloat(countryData[0]['health expenditure % of GDP 2021 or latest']) }
+      ];
+      isGDP = false;
+      title = 'Health Expenditure Change';
+    } else {
+      data = [
+        { year: 2018, gdp: parseFloat(countryData[0]['GDP ($ USD billions PPP) 2018'].replaceAll(',','')) },
+        { year: 2019, gdp: parseFloat(countryData[0]['GDP ($ USD billions PPP) 2019'].replaceAll(',','')) },
+        { year: 2020, gdp: parseFloat(countryData[0]['GDP ($ USD billions PPP) 2020'].replaceAll(',','')) },
+        { year: 2021, gdp: parseFloat(countryData[0]['GDP ($ USD billions PPP) 2021'].replaceAll(',','')) }
+      ];
+      title = 'GDP Change';
+    }
+
+    // Define the scales and axes for the graph
+    var xScale = d3.scaleLinear()
+      .range([0, width3])
+      .domain(d3.extent(data, d => d.year));
+
+    var yScale = d3.scaleLinear()
+      .range([height3, 0])
+      .domain([d3.min(data, d => d.gdp), d3.max(data, d => d.gdp)])
+      .nice();
+
+    var xAxis;
+    if (isGDP) {
+      xAxis = d3.axisBottom(xScale).tickFormat(d => d.toLocaleString('en-US',{maximumFractionDigits:0})).ticks(4);
+    } else {
+      xAxis = d3.axisBottom(xScale).tickFormat(d => d.toLocaleString('en-US',{maximumFractionDigits:0})).ticks(8);
+    }
+    var yAxis = d3.axisLeft(yScale);
+
+    // Define axis
+    svg3.append("g")
+      .attr("class", "xAxis")
+      .attr("transform", "translate(0," + height3 + ")")
+      .call(xAxis);
+
+    svg3.append("g")
+      .attr("class", "yAxis")
+      .call(yAxis);
+
+    svg3.append("text")
+      .attr("class", "title")
+      .attr("transform", "rotate(-90)")
+      .attr("y", -20 - margin.right)
+      .attr("x", 75 - (height / 2))
+      .attr("dy", "1em")
+      .style("text-anchor", "middle")
+      .style("font-size", "9px")
+      .text(title);
+
+    // Define the line generator
+    var line = d3.line()
+      .x(d => xScale(d.year))
+      .y(d => yScale(d.gdp));
+
+    // Draw the line for the GDP values
+    svg3.append("path")
+      .attr("class", "line")
+      .datum(data)
+      .attr("fill", "none")
+      .attr("stroke", "pink")
+      .attr("stroke-width", 3)
+      .attr("d", line);
+  });
+}
+// --------------------------- End of Line Chart ---------------------------
+
 var sortingValue = "GDP ($USD billions PPP) 2018"; // used to determine what the bar chart is sorted on
 
 var stackedExists = false; 
@@ -36,6 +141,12 @@ function onSortingCategoryChanged(){
     sortingValue = category; 
     onCategoryChanged(); 
     onCategoryChangedTwo();
+
+    // Remove line chart
+    svg3.select(".xAxis").remove();
+    svg3.select(".yAxis").remove();
+    svg3.select(".title").remove();
+    svg3.select(".line").remove();
 }
 // Drop down choice updated, fire signal to display the "correct" chart for top chart
 function onCategoryChanged() {
@@ -44,6 +155,13 @@ function onCategoryChanged() {
   var category = select.options[select.selectedIndex].value;
   // Update chart with the selected category of letters
   updateChart(category);
+  currentCategory = category;
+
+  // Remove line chart
+  svg3.select(".xAxis").remove();
+  svg3.select(".yAxis").remove();
+  svg3.select(".title").remove();
+  svg3.select(".line").remove();
 }
 
 // Drop down choice updated, fire signal to display the "correct" chart for bottom chart
@@ -53,6 +171,12 @@ function onCategoryChangedTwo() {
   var category = select.options[select.selectedIndex].value;
   // Update chart with the selected category of letters
   updateChartTwo(category);
+
+  // Remove line chart
+  svg3.select(".xAxis").remove();
+  svg3.select(".yAxis").remove();
+  svg3.select(".title").remove();
+  svg3.select(".line").remove();
 }
 
 /////////////////////////////////////////////////////// Refactoring Completed for bar charts - Caleb: add ur baseline fix here again
@@ -187,6 +311,7 @@ d3.csv(nameOfDataset).then(function(dataset) {
           .style("font-size", "10px")
           .text(d.Country + " " + d[columnTitle]);
         syncBaseline(d.Country, callOther);
+        displayLineChart(d.Country);
       });
   
 })
