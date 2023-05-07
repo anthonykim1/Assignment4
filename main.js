@@ -30,8 +30,6 @@ var svg2 = d3.select("#second")
 var currentCategory = '';
 var isSVG1 = true;
 var title = '';
-var counter = 0;
-  // Set up the SVG element
 var svgWidth = 300;
 var svgHeight = 150;
 var margin3 = { top: 20, right: 20, bottom: 30, left: 70 };
@@ -169,13 +167,21 @@ function displayLineChart(countryName, targetSVG) {
       .defined(d => d.gdp !== null);
 
     // Draw the line for the GDP values
-    svg3.append("path")
+    var pathA = svg3.append("path")
       .attr("class", "line")
       .datum(data)
       .attr("fill", "none")
       .attr("stroke", "pink")
       .attr("stroke-width", 3)
       .attr("d", line);
+
+    var pathNode = pathA.node();
+    var pathLength = pathNode.getTotalLength();
+    var transitionPath = d3.transition().duration(2500);
+    pathA.attr("stroke-dashoffset", pathLength)
+      .attr("stroke-dasharray", pathLength)
+      .transition(transitionPath)
+      .attr("stroke-dashoffset", 0);
   });
 }
 // --------------------------- End of Line Chart ---------------------------
