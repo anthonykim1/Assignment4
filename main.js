@@ -28,6 +28,7 @@ var svg2 = d3.select("#second")
 
 // ------------------------------ Line Chart ------------------------------
 var currentCategory = 'GDP_Per_Capita in $ (PPP) 2018';
+var isSVG1 = true;
 var title = '';
   // Set up the SVG element
 var svgWidth = 300;
@@ -35,25 +36,37 @@ var svgHeight = 150;
 var margin3 = { top: 20, right: 20, bottom: 30, left: 50 };
 var width3 = svgWidth - margin3.left - margin3.right;
 var height3 = svgHeight - margin3.top - margin3.bottom;
-var svg3 = svg.append("svg")
-  .attr('class', 'lineC')
-  .attr("x", width - 300)
-  .attr("y", 0)
-  .append("g")
-  .attr("transform", "translate(" + margin3.left + "," + margin3.top + ")");
+var svg3;
 
 // display line chart
-function displayLineChart(countryName) {
+function displayLineChart(countryName, targetSVG) {
   d3.csv('DatasetForLineChart.csv').then(csvdata => {
-    svg3.select(".xAxis").remove();
-    svg3.select(".yAxis").remove();
-    svg3.select(".title").remove();
-    svg3.select(".line").remove();
+    if (svg3) {
+      svg3.select(".xAxis").remove();
+      svg3.select(".yAxis").remove();
+      svg3.select(".title").remove();
+      svg3.select(".line").remove();
+    }
+    if (targetSVG === "svg2") {
+      svg3 = svg.append("svg")
+        .attr('class', 'lineC')
+        .attr("x", width - 300)
+        .attr("y", 0)
+        .append("g")
+        .attr("transform", "translate(" + margin3.left + "," + margin3.top + ")");
+    } else {
+      svg3 = svg2.append("svg")
+        .attr('class', 'lineC')
+        .attr("x", width - 300)
+        .attr("y", 0)
+        .append("g")
+        .attr("transform", "translate(" + margin3.left + "," + margin3.top + ")");
+    }
     var countryData = csvdata.filter((d) => d["indicator"] === countryName);
 
     // Define the data for the GDP values
     var data;
-    var isGDP = true;
+    var categoryIs = 'GDP';
     if (currentCategory === 'health-2018-bar' || currentCategory === 'health-2019-bar') {
       data = [
         { year: 2014, gdp: parseFloat(countryData[0]['health expenditure % of GDP 2014']) },
@@ -65,17 +78,36 @@ function displayLineChart(countryName) {
         { year: 2020, gdp: parseFloat(countryData[0]['health expenditure % of GDP 2020']) },
         { year: 2021, gdp: parseFloat(countryData[0]['health expenditure % of GDP 2021 or latest']) }
       ];
-      isGDP = false;
-      title = 'Health Expenditure Change';
+      categoryIs = 'Health';
+      title = 'Health Expenditure per Year';
+    } else if (currentCategory === 'unemployement-2018-bar' || currentCategory === 'unemployement-2021-bar') {
+      data = [
+        { year: 2018, gdp: parseFloat(countryData[0]['unemployment (%) 2018'].replaceAll(',','')) },
+        { year: 2021, gdp: parseFloat(countryData[0]['unemployment (%) 2021'].replaceAll(',','')) }
+      ];
+      categoryIs = 'Unemployment';
+      title = 'Unemployment per Year';
+    } else if (currentCategory === 'GDP-2018-bar' || currentCategory === 'GDP-2019-bar' ||
+              currentCategory === 'GDP-2020-bar' || currentCategory === 'GDP-2021-bar') {
+      data = [
+        { year: 2018, gdp: parseFloat(countryData[0]['GDP ($ USD billions PPP) 2018'].replaceAll(',','')) },
+        { year: 2019, gdp: parseFloat(countryData[0]['GDP ($ USD billions PPP) 2019'].replaceAll(',','')) },
+        { year: 2020, gdp: parseFloat(countryData[0]['GDP ($ USD billions PPP) 2020'].replaceAll(',','')) },
+        { year: 2021, gdp: parseFloat(countryData[0]['GDP ($ USD billions PPP) 2021'].replaceAll(',','')) }
+      ];
+      categoryIs = 'GDP';
+      title = 'GDP per Year';
     } else {
       data = [
-        { year: '2018', gdp: parseFloat(countryData[0]['GDP ($ USD billions PPP) 2018'].replaceAll(',','')) },
-        { year: '2019', gdp: parseFloat(countryData[0]['GDP ($ USD billions PPP) 2019'].replaceAll(',','')) },
-        { year: '2020', gdp: parseFloat(countryData[0]['GDP ($ USD billions PPP) 2020'].replaceAll(',','')) },
-        { year: '2021', gdp: parseFloat(countryData[0]['GDP ($ USD billions PPP) 2021'].replaceAll(',','')) }
+        { year: 2018, gdp: parseFloat(countryData[0]['GDP per capita in $ (PPP) 2018'].replaceAll(',','')) },
+        { year: 2019, gdp: parseFloat(countryData[0]['GDP per capita in $ (PPP) 2019'].replaceAll(',','')) },
+        { year: 2020, gdp: parseFloat(countryData[0]['GDP per capita in $ (PPP) 2020'].replaceAll(',','')) },
+        { year: 2021, gdp: parseFloat(countryData[0]['GDP per capita in $ (PPP) 2021'].replaceAll(',','')) }
       ];
-      title = 'GDP Change';
+      categoryIs = 'GDP';
+      title = 'GDP per Year';
     }
+    console.log(currentCategory);
 
     // Convert 0's to null
     data = data.map(d => ({
@@ -94,10 +126,12 @@ function displayLineChart(countryName) {
       .nice();
 
     var xAxis;
-    if (isGDP) {
+    if (categoryIs === 'GDP') {
       xAxis = d3.axisBottom(xScale).ticks(4).tickFormat(d3.format("d"));
-    } else {
+    } else if (categoryIs === 'Health') {
       xAxis = d3.axisBottom(xScale).ticks(8).tickFormat(d3.format("d"));
+    } else {
+      xAxis = d3.axisBottom(xScale).ticks(2).tickFormat(d3.format("d"));
     }
     var yAxis = d3.axisLeft(yScale);
 
@@ -114,11 +148,11 @@ function displayLineChart(countryName) {
     svg3.append("text")
       .attr("class", "title")
       .attr("transform", "rotate(-90)")
-      .attr("y", -20 - margin.right)
+      .attr("y", -30 - margin3.right)
       .attr("x", 75 - (height / 2))
       .attr("dy", "1em")
       .style("text-anchor", "middle")
-      .style("font-size", "9px")
+      .style("font-size", "10px")
       .text(title);
 
     // Define the line generator
@@ -163,13 +197,13 @@ function onCategoryChanged() {
   var category = select.options[select.selectedIndex].value;
   // Update chart with the selected category of letters
   updateChart(category);
-  currentCategory = category;
 
   // Remove line chart
   svg3.select(".xAxis").remove();
   svg3.select(".yAxis").remove();
   svg3.select(".title").remove();
   svg3.select(".line").remove();
+  currentCategory = category;
 }
 
 // Drop down choice updated, fire signal to display the "correct" chart for bottom chart
@@ -185,6 +219,7 @@ function onCategoryChangedTwo() {
   svg3.select(".yAxis").remove();
   svg3.select(".title").remove();
   svg3.select(".line").remove();
+  currentCategory = category;
 }
 
 /////////////////////////////////////////////////////// Refactoring Completed for bar charts - Caleb: add ur baseline fix here again
@@ -204,7 +239,7 @@ d3.csv(nameOfDataset).then(function(dataset) {
   var yearSplitter = tempColumnTitle.split(/(\s+)/).slice(-1);
   
   data.sort(function(a,b) {
-    console.log(sortingValue);
+    //console.log(sortingValue);
     return d3.descending(+a[sortingValue], +b[sortingValue]);
   });
 
@@ -319,9 +354,8 @@ d3.csv(nameOfDataset).then(function(dataset) {
           .style("font-size", "10px")
           .text(d.Country + " " + d[columnTitle]);
         syncBaseline(d.Country, callOther);
-        displayLineChart(d.Country);
+        displayLineChart(d.Country, callOther);
       });
-  
 })
 }
 
