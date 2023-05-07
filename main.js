@@ -27,13 +27,14 @@ var svg2 = d3.select("#second")
           "translate(" + marginTwo.left + "," + marginTwo.top + ")");
 
 // ------------------------------ Line Chart ------------------------------
-var currentCategory = 'GDP_Per_Capita in $ (PPP) 2018';
+var currentCategory = 'GDP-2018-bar';
 var isSVG1 = true;
 var title = '';
+var counter = 0;
   // Set up the SVG element
 var svgWidth = 300;
 var svgHeight = 150;
-var margin3 = { top: 20, right: 20, bottom: 30, left: 50 };
+var margin3 = { top: 20, right: 20, bottom: 30, left: 70 };
 var width3 = svgWidth - margin3.left - margin3.right;
 var height3 = svgHeight - margin3.top - margin3.bottom;
 var svg3;
@@ -46,21 +47,29 @@ function displayLineChart(countryName, targetSVG) {
       svg3.select(".yAxis").remove();
       svg3.select(".title").remove();
       svg3.select(".line").remove();
+    } else {
+      counter += 1;
     }
     if (targetSVG === "svg2") {
       svg3 = svg.append("svg")
         .attr('class', 'lineC')
         .attr("x", width - 300)
-        .attr("y", 0)
+        .attr("y", -45)
         .append("g")
         .attr("transform", "translate(" + margin3.left + "," + margin3.top + ")");
+        if (counter == 1) {
+          currentCategory = "GDP per capita in $ (PPP) 2018";
+        }
     } else {
       svg3 = svg2.append("svg")
         .attr('class', 'lineC')
         .attr("x", width - 300)
-        .attr("y", 0)
+        .attr("y", -45)
         .append("g")
         .attr("transform", "translate(" + margin3.left + "," + margin3.top + ")");
+        if (counter == 1) {
+          currentCategory = "GDP-2018-bar";
+        }
     }
     var countryData = csvdata.filter((d) => d["indicator"] === countryName);
 
@@ -105,9 +114,8 @@ function displayLineChart(countryName, targetSVG) {
         { year: 2021, gdp: parseFloat(countryData[0]['GDP per capita in $ (PPP) 2021'].replaceAll(',','')) }
       ];
       categoryIs = 'GDP';
-      title = 'GDP per Year';
+      title = 'GDP per Capita per Year';
     }
-    console.log(currentCategory);
 
     // Convert 0's to null
     data = data.map(d => ({
@@ -148,7 +156,7 @@ function displayLineChart(countryName, targetSVG) {
     svg3.append("text")
       .attr("class", "title")
       .attr("transform", "rotate(-90)")
-      .attr("y", -30 - margin3.right)
+      .attr("y", -40 - margin3.right)
       .attr("x", 75 - (height / 2))
       .attr("dy", "1em")
       .style("text-anchor", "middle")
