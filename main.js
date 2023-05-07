@@ -27,7 +27,7 @@ var svg2 = d3.select("#second")
           "translate(" + marginTwo.left + "," + marginTwo.top + ")");
 
 // ------------------------------ Line Chart ------------------------------
-var currentCategory = 'GDP-2018-bar';
+var currentCategory = '';
 var isSVG1 = true;
 var title = '';
 var counter = 0;
@@ -47,8 +47,6 @@ function displayLineChart(countryName, targetSVG) {
       svg3.select(".yAxis").remove();
       svg3.select(".title").remove();
       svg3.select(".line").remove();
-    } else {
-      counter += 1;
     }
     if (targetSVG === "svg2") {
       svg3 = svg.append("svg")
@@ -57,9 +55,6 @@ function displayLineChart(countryName, targetSVG) {
         .attr("y", -45)
         .append("g")
         .attr("transform", "translate(" + margin3.left + "," + margin3.top + ")");
-        if (counter == 1) {
-          currentCategory = "GDP per capita in $ (PPP) 2018";
-        }
     } else {
       svg3 = svg2.append("svg")
         .attr('class', 'lineC')
@@ -67,16 +62,19 @@ function displayLineChart(countryName, targetSVG) {
         .attr("y", -45)
         .append("g")
         .attr("transform", "translate(" + margin3.left + "," + margin3.top + ")");
-        if (counter == 1) {
-          currentCategory = "GDP-2018-bar";
-        }
     }
     var countryData = csvdata.filter((d) => d["indicator"] === countryName);
 
     // Define the data for the GDP values
     var data;
     var categoryIs = 'GDP';
-    if (currentCategory === 'health-2018-bar' || currentCategory === 'health-2019-bar') {
+    if (currentCategory === 'health expenditure per person ($) 2018' || currentCategory === 'health expenditure per person ($) 2019') {
+      data = [
+        { year: 2015, gdp: parseFloat(countryData[0]['health expenditure per person 2015'].replaceAll(',',''))},
+        { year: 2018, gdp: parseFloat(countryData[0]['health expenditure per person 2018'].replaceAll(',',''))},
+        { year: 2019, gdp: parseFloat(countryData[0]['health expenditure per person 2019'].replaceAll(',',''))}
+      ];
+      /*
       data = [
         { year: 2014, gdp: parseFloat(countryData[0]['health expenditure % of GDP 2014']) },
         { year: 2015, gdp: parseFloat(countryData[0]['health expenditure % of GDP 2015']) },
@@ -87,17 +85,18 @@ function displayLineChart(countryName, targetSVG) {
         { year: 2020, gdp: parseFloat(countryData[0]['health expenditure % of GDP 2020']) },
         { year: 2021, gdp: parseFloat(countryData[0]['health expenditure % of GDP 2021 or latest']) }
       ];
+      */
       categoryIs = 'Health';
       title = 'Health Expenditure per Year';
-    } else if (currentCategory === 'unemployement-2018-bar' || currentCategory === 'unemployement-2021-bar') {
+    } else if (currentCategory === 'unemployment (%) 2018' || currentCategory === 'unemployment (%) 2021') {
       data = [
         { year: 2018, gdp: parseFloat(countryData[0]['unemployment (%) 2018'].replaceAll(',','')) },
         { year: 2021, gdp: parseFloat(countryData[0]['unemployment (%) 2021'].replaceAll(',','')) }
       ];
       categoryIs = 'Unemployment';
       title = 'Unemployment per Year';
-    } else if (currentCategory === 'GDP-2018-bar' || currentCategory === 'GDP-2019-bar' ||
-              currentCategory === 'GDP-2020-bar' || currentCategory === 'GDP-2021-bar') {
+    } else if (currentCategory === 'GDP ($USD billions PPP) 2018' || currentCategory === 'GDP ($USD billions PPP) 2019' ||
+              currentCategory === 'GDP ($USD billions PPP) 2020' || currentCategory === 'GDP ($USD billions PPP) 2021') {
       data = [
         { year: 2018, gdp: parseFloat(countryData[0]['GDP ($ USD billions PPP) 2018'].replaceAll(',','')) },
         { year: 2019, gdp: parseFloat(countryData[0]['GDP ($ USD billions PPP) 2019'].replaceAll(',','')) },
@@ -137,7 +136,7 @@ function displayLineChart(countryName, targetSVG) {
     if (categoryIs === 'GDP') {
       xAxis = d3.axisBottom(xScale).ticks(4).tickFormat(d3.format("d"));
     } else if (categoryIs === 'Health') {
-      xAxis = d3.axisBottom(xScale).ticks(8).tickFormat(d3.format("d"));
+      xAxis = d3.axisBottom(xScale).ticks(3).tickFormat(d3.format("d"));
     } else {
       xAxis = d3.axisBottom(xScale).ticks(2).tickFormat(d3.format("d"));
     }
@@ -211,7 +210,6 @@ function onCategoryChanged() {
   svg3.select(".yAxis").remove();
   svg3.select(".title").remove();
   svg3.select(".line").remove();
-  currentCategory = category;
 }
 
 // Drop down choice updated, fire signal to display the "correct" chart for bottom chart
@@ -227,7 +225,6 @@ function onCategoryChangedTwo() {
   svg3.select(".yAxis").remove();
   svg3.select(".title").remove();
   svg3.select(".line").remove();
-  currentCategory = category;
 }
 
 /////////////////////////////////////////////////////// Refactoring Completed for bar charts - Caleb: add ur baseline fix here again
@@ -362,6 +359,7 @@ d3.csv(nameOfDataset).then(function(dataset) {
           .style("font-size", "10px")
           .text(d.Country + " " + d[columnTitle]);
         syncBaseline(d.Country, callOther);
+        currentCategory = columnTitle;
         displayLineChart(d.Country, callOther);
       });
 })
