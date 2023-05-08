@@ -508,7 +508,7 @@ function syncBaseline(countryName, whichSVGToCall, columnTitle) {
         svg2.append("text")
         .attr("class", "baseline-country")
         .attr("x", d3.select(this).attr('x'))
-        .attr("y", d3.select(this).attr('y'))
+        .attr("y", d3.select(this).attr('y') - 10)
         .attr("text-anchor", "middle")
         .style("font-size", "10px")
         .text(d.Country + " " + d[columnTitle])
@@ -544,7 +544,7 @@ function syncBaseline(countryName, whichSVGToCall, columnTitle) {
         svg.append("text")
         .attr("class", "baseline-country")
         .attr("x", d3.select(this).attr('x'))
-        .attr("y", d3.select(this).attr('y'))
+        .attr("y", d3.select(this).attr('y')-10)
         .attr("text-anchor", "middle")
         .style("font-size", "10px")
         .text(d.Country + " " + d[columnTitle])
@@ -684,12 +684,20 @@ function createStackedBarChart(nameOfDataset, targetSVG, width, height, margin, 
         // GDP column name means gdp - whatever column name
         return d3.descending( (+a["GDPperCapita"]) + (+a["health"]), (+b["GDPperCapita"]) + (+b["health"]))
       });
+      svg.append("circle").attr("cx",200).attr("cy",130).attr("r", 6).style("fill", "#69b3a2")
+svg.append("circle").attr("cx",200).attr("cy",160).attr("r", 6).style("fill", "#404080")
+svg.append("text").attr("x", 220).attr("y", 130).text("variable A").style("font-size", "15px").attr("alignment-baseline","middle")
+svg.append("text").attr("x", 220).attr("y", 160).text("variable B").style("font-size", "15px").attr("alignment-baseline","middle")
     } else {
       console.log("reach here");
       data.sort(function(a, b) {
         // GDP column name means gdp - whatever column name
         return d3.descending( (+a["GDP"]) + (+a["health"]) + (+a["military"]), (+b["GDP"]) + (+b["health"]) + (+b["military"]))
       });
+      svg2.append("circle").attr("cx",200).attr("cy",130).attr("r", 6).style("fill", "#69b3a2")
+svg2.append("circle").attr("cx",200).attr("cy",160).attr("r", 6).style("fill", "#404080")
+svg2.append("text").attr("x", 220).attr("y", 130).text("variable A").style("font-size", "15px").attr("alignment-baseline","middle")
+svg2.append("text").attr("x", 220).attr("y", 160).text("variable B").style("font-size", "15px").attr("alignment-baseline","middle")
     }
 
     var subgroups = data.columns.slice(1); // list of health value, military value, GDP without H and M columns.
