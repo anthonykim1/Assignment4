@@ -512,6 +512,7 @@ function createBarChart(nameOfDataset, targetSVG, width, height, margin, yDomain
 function syncBaseline(countryName, whichSVGToCall, columnTitle) {
   if(whichSVGToCall === "svg2" && !stackedExists2) {
     svg2.selectAll("bar-label").remove(); 
+    svg2.selectAll("text").remoe(); 
     svg2.selectAll('rect').each(function(d,i) {
       if (d.Country === countryName) {
         svg2.select(".baseline").remove();
@@ -548,6 +549,7 @@ function syncBaseline(countryName, whichSVGToCall, columnTitle) {
     })
   } else if(whichSVGToCall === "svg" && !stackedExists1){
     svg.selectAll("bar-label").remove(); 
+    svg.selectAll("text").remove();
     svg.selectAll('rect').each(function(d,i) {
       if (d.Country === countryName) {
         svg.select(".baseline").remove();
@@ -884,7 +886,7 @@ function onClickBaseline(countryName, whichSVGToCall) { // breakpoint
         svg2.append("text")
         .attr("class", "bar-label")
         .attr("x", d3.select(this).attr('x'))
-        .attr("y", d3.select(this).attr('y'))
+        .attr("y", d3.select(this).attr('y') - 10)
         .attr("text-anchor", "middle")
         .style("font-size", "10px")
         .text(d.Country)
@@ -902,7 +904,7 @@ function onClickBaseline(countryName, whichSVGToCall) { // breakpoint
         svg.append("text")
         .attr("class", "bar-label")
         .attr("x", d3.select(this).attr('x'))
-        .attr("y", d3.select(this).attr('y'))
+        .attr("y", d3.select(this).attr('y') - 10)
         .attr("text-anchor", "middle")
         .style("font-size", "10px")
         .text(d.Country)
@@ -924,7 +926,7 @@ function onClickBaseline(countryName, whichSVGToCall) { // breakpoint
           svg2.append("text")
           .attr("class", "bar-label")
           .attr("x", d3.select(this).attr('x'))
-          .attr("y", d3.select(this).attr('y'))
+          .attr("y", d3.select(this).attr('y') - 10)
           .attr("text-anchor", "middle")
           .style("font-size", "10px")
           .text(d.Country)
@@ -942,7 +944,7 @@ function onClickBaseline(countryName, whichSVGToCall) { // breakpoint
           svg.append("text")
           .attr("class", "bar-label")
           .attr("x", d3.select(this).attr('x'))
-          .attr("y", d3.select(this).attr('y'))
+          .attr("y", d3.select(this).attr('y') - 10)
           .attr("text-anchor", "middle")
           .style("font-size", "10px")
           .text(d.Country)
