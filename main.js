@@ -1,10 +1,10 @@
 // python -m http.server 8080       
-var margin = {top: 30, right: 30, bottom: 70, left: 60},
+var margin = {top: 30, right: 30, bottom: 70, left: 70},
     width = 1600 - margin.left - margin.right,
     height = 350 - margin.top - margin.bottom;
 
 // margin for second bar chart
-var marginTwo = {top: 30, right: 30, bottom: 70, left: 60},
+var marginTwo = {top: 30, right: 30, bottom: 70, left: 70},
   width2 = 1600 - marginTwo.left - marginTwo.right, // 900 => 2000 testing
   height2 = 350 - marginTwo.top - marginTwo.bottom; // 400 => 600 testing
 
@@ -198,10 +198,12 @@ function onSortingCategoryChanged(){
     onCategoryChangedTwo();
 
     // Remove line chart
-    svg3.select(".xAxis").remove();
-    svg3.select(".yAxis").remove();
-    svg3.select(".title").remove();
-    svg3.select(".line").remove();
+    if (svg3) {
+      svg3.select(".xAxis").remove();
+      svg3.select(".yAxis").remove();
+      svg3.select(".title").remove();
+      svg3.select(".line").remove();
+    }
 }
 // Drop down choice updated, fire signal to display the "correct" chart for top chart
 function onCategoryChanged() {
@@ -213,10 +215,12 @@ function onCategoryChanged() {
   updateChart(category);
 
   // Remove line chart
-  svg3.select(".xAxis").remove();
-  svg3.select(".yAxis").remove();
-  svg3.select(".title").remove();
-  svg3.select(".line").remove();
+  if (svg3) {
+    svg3.select(".xAxis").remove();
+    svg3.select(".yAxis").remove();
+    svg3.select(".title").remove();
+    svg3.select(".line").remove();
+  }
 }
 
 // Drop down choice updated, fire signal to display the "correct" chart for bottom chart
@@ -228,15 +232,17 @@ function onCategoryChangedTwo() {
   updateChartTwo(category);
 
   // Remove line chart
-  svg3.select(".xAxis").remove();
-  svg3.select(".yAxis").remove();
-  svg3.select(".title").remove();
-  svg3.select(".line").remove();
+  if (svg3) {
+    svg3.select(".xAxis").remove();
+    svg3.select(".yAxis").remove();
+    svg3.select(".title").remove();
+    svg3.select(".line").remove();
+  }
 }
 
 /////////////////////////////////////////////////////// Refactoring Completed for bar charts - Caleb: add ur baseline fix here again
-function createBarChart(nameOfDataset, targetSVG, width, height, margin, yDomainScaleForAxis, columnTitle) {
-d3.csv(nameOfDataset).then(function(dataset) {
+function createBarChart(nameOfDataset, targetSVG, width, height, margin, yDomainScaleForAxis, columnTitle, isLog) {
+  d3.csv(nameOfDataset).then(function(dataset) {
   // clear caching 
   targetSVG.selectAll(".bar").remove();
   targetSVG.select(".x-axis").remove();
@@ -257,26 +263,33 @@ d3.csv(nameOfDataset).then(function(dataset) {
 
   // X axis
   var xScale = d3.scaleBand()
-  .range([ 0, width ])
-  .domain(data.map(function(d) { return d.Country; }))
-  .padding(0.2);
+    .range([ 0, width ])
+    .domain(data.map(function(d) { return d.Country; }))
+    .padding(0.2);
   targetSVG.append("g")
-  .attr("class", "x-axis")
-  .attr("transform", "translate(0," + height + ")")
-  .call(d3.axisBottom(xScale))
-  .selectAll("text")
+    .attr("class", "x-axis")
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.axisBottom(xScale))
+    .selectAll("text")
     .attr("transform", "translate(-10,0)rotate(-45)")
     .style("text-anchor", "end")
     .style("font-size", "6px");
 
-  var yScale = d3.scaleLinear()
-    .domain([0, yDomainScaleForAxis]) // ****** changing the values inside this parenthesis can change the extent of y
-    .range([height, 0]);
-    targetSVG.append("g")
+  if (isLog) {
+    var yScale = d3.scaleLog()
+      .base(2)
+      .domain([1, yDomainScaleForAxis]) // ****** changing the values inside this parenthesis can change the extent of y
+      .range([height, 0]);
+  } else {
+    var yScale = d3.scaleLinear()
+      .domain([0, yDomainScaleForAxis]) // ****** changing the values inside this parenthesis can change the extent of y
+      .range([height, 0]);
+  }
+  targetSVG.append("g")
     .attr("class", "y-axis")
     .call(d3.axisLeft(yScale));
-
-    targetSVG.append("text")
+    
+  targetSVG.append("text")
     .attr("class", "y-axis-title")
     .attr("transform", "rotate(-90)")
     .attr("y", 0 - margin.left)
@@ -294,6 +307,7 @@ d3.csv(nameOfDataset).then(function(dataset) {
           callOther = "svg";
         }
 
+    console.log("bye");
 
   // Bar starts here
   targetSVG.selectAll(".bar")
@@ -465,8 +479,8 @@ function syncBaseline(countryName, whichSVGToCall) {
 // function createBarChart(nameOfDataset, targetSVG, width, height, margin, yDomainScaleForAxis, columnTitle) // 
 
 // display 2021 GDP per capita for top chart as default
-createBarChart("dataset.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2021");
-createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 4000, "GDP ($USD billions PPP) 2019");
+createBarChart("dataset.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2021", false);
+createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 23000, "GDP ($USD billions PPP) 2019", true);
 
 ////
 // function updateChart(category){
@@ -486,28 +500,28 @@ function updateChart(category){
   //console.log("updating chart #1");
   if(category === "gdp-per-capita-2018-bar") {
     stackedExists1 = false; 
-    createBarChart("dataset.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2018");
+    createBarChart("dataset.csv", svg, width, height, margin, 120000, "GDP per capita in $ (PPP) 2018", false);
   } else if (category === "gdp-per-capita-2019-bar") {
     stackedExists1 = false; 
-    createBarChart("dataset.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2019");
+    createBarChart("dataset.csv", svg, width, height, margin, 120000, "GDP per capita in $ (PPP) 2019", false);
   } else if (category === "gdp-per-capita-2020-bar") {
     stackedExists1 = false; 
-    createBarChart("dataset.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2020");
+    createBarChart("dataset.csv", svg, width, height, margin, 120000, "GDP per capita in $ (PPP) 2020", false);
   } else if (category === "gdp-per-capita-2021-bar") {
     stackedExists1 = false; 
-    createBarChart("dataset.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2021");
+    createBarChart("dataset.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2021", false);
   } else if (category === "health-gdp-cap-2018-stacked") {
     stackedExists1 = true; 
-    createStackedBarChart("2018GDPperCapitaHealth.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2018");
+    createStackedBarChart("2018GDPperCapitaHealth.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2018", false);
   } else if (category === "health-gdp-cap-2019-stacked") {
     stackedExists1 = true; 
-    createStackedBarChart("2019GDPperCapitaHealth.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2019");
+    createStackedBarChart("2019GDPperCapitaHealth.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2019", false);
   } else if (category === "health-2018-bar") {
     stackedExists1 = false; 
-    createBarChart("dataset.csv", svg, width, height, margin, 11000, "health expenditure per person ($) 2018");
+    createBarChart("dataset.csv", svg, width, height, margin, 11000, "health expenditure per person ($) 2018", false);
   } else if (category === "health-2019-bar") {
     stackedExists1 = false; 
-    createBarChart("dataset.csv", svg, width, height, margin, 11000, "health expenditure per person ($) 2019");
+    createBarChart("dataset.csv", svg, width, height, margin, 11000, "health expenditure per person ($) 2019", false);
   }
 }
 
@@ -525,33 +539,33 @@ function updateChart(category){
 function updateChartTwo(category) {
   if(category === "GDP-2018-bar") {
     stackedExists2 = false; 
-    createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 4000, "GDP ($USD billions PPP) 2018");
+    createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 23000, "GDP ($USD billions PPP) 2018", true);
   } else if (category === "GDP-2019-bar") {
     stackedExists2 = false; 
-    createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 4000, "GDP ($USD billions PPP) 2019");
+    createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 23000, "GDP ($USD billions PPP) 2019", true);
   } else if (category === "GDP-2020-bar") {
     stackedExists2 = false; 
-    createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 4000, "GDP ($USD billions PPP) 2020");
+    createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 23000, "GDP ($USD billions PPP) 2020", true);
   } else if (category === "GDP-2021-bar") {
     stackedExists2 = false; 
-    createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 4000, "GDP ($USD billions PPP) 2021");
+    createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 23000, "GDP ($USD billions PPP) 2021", true);
   } else if (category === "health-military-gdp-2019-stacked") {
     stackedExists2 = true; 
-    createStackedBarChart("2019GDPHealthMilitary.csv", svg2, width2, height2, marginTwo, 500, "GDP ($USD billions PPP) 2019");
+    createHundredStackedBarchart("2019GDPHealthMilitary2.csv", svg2, width2, height2, marginTwo, 100, "GDP ($USD billions PPP) 2019");
   } else if (category === "health-military-gdp-2021-stacked") {
     stackedExists2 = true; 
-    createStackedBarChart("2021GDPHealthMilitary.csv", svg2, width2, height2, marginTwo, 500, "GDP ($USD billions PPP) 2021");
+    createStackedBarChart("2021GDPHealthMilitary2.csv", svg2, width2, height2, marginTwo, 100, "GDP ($USD billions PPP) 2021", false);
   } else if (category === "unemployement-2021-bar") {
     stackedExists2 = false; 
-    createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 50, "unemployment (%) 2021"); 
+    createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 50, "unemployment (%) 2021", false); 
   } else if (category === "unemployement-2018-bar") {
     stackedExists2 = false; 
-    createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 50, "unemployment (%) 2018"); 
+    createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 50, "unemployment (%) 2018", false); 
   }
 }
 
 ///////////// Refactoring for stacked bar chart in progress ///////////////////
-function createStackedBarChart(nameOfDataset, targetSVG, width, height, margin, yDomainScaleForAxis, columnTitle) {
+function createStackedBarChart(nameOfDataset, targetSVG, width, height, margin, yDomainScaleForAxis, columnTitle, isLog) {
   d3.csv(nameOfDataset).then(function(data) {
     targetSVG.selectAll(".bar").remove();
     targetSVG.select(".x-axis").remove();
@@ -561,11 +575,11 @@ function createStackedBarChart(nameOfDataset, targetSVG, width, height, margin, 
     targetSVG.select(".baseline-country").remove();
 
     var callOther;
-        if (targetSVG == svg || targetSVG === svg) {
-          callOther = "svg2";
-        }else {
-          callOther = "svg";
-        }
+    if (targetSVG == svg || targetSVG === svg) {
+      callOther = "svg2";
+    } else {
+      callOther = "svg";
+    }
 
     // addition of gdp depends on top or bottom => Top has two to add, bottom has 3
     if (targetSVG == svg || targetSVG === svg) {
@@ -588,22 +602,185 @@ function createStackedBarChart(nameOfDataset, targetSVG, width, height, margin, 
     var subgroups = data.columns.slice(1); // list of health value, military value, GDP without H and M columns.
     // console.log(subgroups);
     var xScale = d3.scaleBand()
-    .range([ 0, width ])
-    .domain(data.map(function(d) { return d.Country; }))
-    .padding(0.2);
+      .range([ 0, width ])
+      .domain(data.map(function(d) { return d.Country; }))
+      .padding(0.2);
     targetSVG.append("g")
-    .attr("class", "x-axis")
-    .attr("transform", "translate(0," + height + ")")
-    .call(d3.axisBottom(xScale).tickSizeOuter(0))
-    .selectAll("text")
-      .attr("transform", "translate(-10,0)rotate(-45)")
-      .style("text-anchor", "end")
-      .style("font-size", "6px");
+      .attr("class", "x-axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(xScale).tickSizeOuter(0))
+      .selectAll("text")
+        .attr("transform", "translate(-10,0)rotate(-45)")
+        .style("text-anchor", "end")
+        .style("font-size", "6px");
 
+    if (isLog) {
+      var yScale = d3.scaleLog()
+        .base(2)
+        .domain([0.25, yDomainScaleForAxis]) // ****** changing the values inside this parenthesis can change the extent of y
+        .range([height, 0]);
+    } else {
+      var yScale = d3.scaleLinear()
+        .domain([0, yDomainScaleForAxis])
+        .range([height, 0]);
+    }
+
+    targetSVG.append("g")
+      .attr("class", "y-axis")
+      .call(d3.axisLeft(yScale));
+  
+    targetSVG.append("text")
+      .attr("class", "y-axis-title")
+      .attr("transform", "rotate(-90)")
+      .attr("y", -15 - margin.right)
+      .attr("x",0 - (height / 2))
+      .attr("dy", "1em")
+      .style("text-anchor", "middle")
+      .style("font-size", "10px")
+      .text(columnTitle);
+
+       // color palette choices 
+    var color = d3.scaleOrdinal()
+      .domain(subgroups)
+      .range(['#e41a1c','#377eb8','#4daf4a'])
+  
+        //stack the data? --> stack per subgroup
+    var stackedData = d3.stack()
+      .keys(subgroups)
+      (data)
+      // console.log(stackedData);
+
+        //// animation
+    var mouseover = function(d) {
+      // what subgroup are we hovering?
+      var subgroupName = d3.select(this.parentNode).datum().key; // This was the tricky part
+      // console.log(subgroupName);
+      var subgroupValue = d.data[subgroupName];
+      // console.log(subgroupValue);
+      // Reduce opacity of all rect to 0.2
+      d3.selectAll(".myRect").style("opacity", 0.2)
+      
+        var taylorMade = subgroupName.replaceAll(' ', '.');
+        // console.log(taylorMade);
+        // console.log(d3.selectAll(".myRect."+taylorMade));
+        d3.selectAll(".myRect."+taylorMade).style("opacity", 1);
+    }
+  var mouseleave = function(d) {
+      // Back to normal opacity: 0.8
+      d3.selectAll(".myRect")
+        .style("opacity",0.8)
+      }
+
+//// animation
+  
+    targetSVG.append("g")
+      .selectAll("g")
+      // Enter in the stack data = loop key per key = group per group
+      .data(stackedData)
+      .enter().append("g")
+        .attr("fill", function(d) { return color(d.key); })
+        .attr("class", function(d){ return "myRect " + d.key }) // 5/3 animation attempt
+        .selectAll("rect")
+        // enter a second time = loop subgroup per subgroup to add all rectangles
+        .data(function(d) { return d; })
+        .enter().append("rect")
+          .attr("class", "bar")
+          .attr("x", function(d) { return xScale(d.data.Country); })                                                                     //.attr("x", function(d) { return xScale2(d.data.group); })
+          .attr("y", function(d) { return yScale(d[1]); })
+          .attr("height", function(d) { return yScale(d[0]) - yScale(d[1]); })
+          .attr("width",xScale.bandwidth())
+          .attr("stroke", "grey")
+          .on("mouseover", function(d){
+            svg.selectAll("bar-label").remove(); 
+            svg2.selectAll("bar-label").remove(); 
+            // what subgroup are we hovering?
+            var subgroupName = d3.select(this.parentNode).datum().key; // This was the tricky part
+            // console.log(subgroupName);
+            var subgroupValue = d.data[subgroupName];
+            // console.log(subgroupValue);
+            // Reduce opacity of all rect to 0.2
+            d3.selectAll(".myRect").style("opacity", 0.3)
+          
+            var taylorMade = subgroupName.replaceAll(' ', '.');
+            // console.log(taylorMade);
+            // console.log(d3.selectAll(".myRect."+taylorMade));
+            d3.selectAll(".myRect."+taylorMade).style("opacity", 0.7);
+            targetSVG.append("text")
+              .attr("class", "bar-label")
+              .attr("x", xScale(d.data.Country))
+              .attr("y", yScale(d[1]))
+              .attr("text-anchor", "middle")
+              .style("font-size", "10px")
+              .text(d.data.Country);
+
+            onClickBaseline(d.data.Country, callOther); 
+          })
+          .on("mouseleave", function(d){
+            // Back to normal opacity: 0.8
+            
+            d3.selectAll(".myRect")
+            .style("opacity",1)
+            unClickBaseline(d.data.Country, callOther);
+          })
+
+  })
+}
+
+///////////// Refactoring for stacked bar chart in progress ///////////////////
+function createHundredStackedBarchart(nameOfDataset, targetSVG, width, height, margin, yDomainScaleForAxis, columnTitle) {
+  d3.csv(nameOfDataset).then(function(data) {
+    targetSVG.selectAll(".bar").remove();
+    targetSVG.select(".x-axis").remove();
+    targetSVG.select(".y-axis").remove();
+    targetSVG.select(".y-axis-title").remove();
+    targetSVG.select(".baseline").remove();
+    targetSVG.select(".baseline-country").remove();
+
+    var callOther;
+    if (targetSVG == svg || targetSVG === svg) {
+      callOther = "svg2";
+    } else {
+      callOther = "svg";
+    }
+
+    // addition of gdp depends on top or bottom => Top has two to add, bottom has 3
+    if (targetSVG == svg || targetSVG === svg) {
+      console.log("here");
+      // add only gdp and health
+      data.sort(function(a, b) {
+        // console.log((+a["GDP ($USD billions PPP) 2018"], +b["GDP ($USD billions PPP) 2018"]));
+        // GDP column name means gdp - whatever column name
+        return d3.descending( (+a["GDPperCapita"]) + (+a["health"]), (+b["GDPperCapita"]) + (+b["health"]))
+      });
+    } else {
+      console.log("reach here");
+      data.sort(function(a, b) {
+        // console.log((+a["GDP ($USD billions PPP) 2018"], +b["GDP ($USD billions PPP) 2018"]));
+        // GDP column name means gdp - whatever column name
+        return d3.descending( (+a["GDP"]) + (+a["health"]) + (+a["military"]), (+b["GDP"]) + (+b["health"]) + (+b["military"]))
+      });
+    }
+
+    var subgroups = data.columns.slice(1); // list of health value, military value, GDP without H and M columns.
+    var xScale = d3.scaleBand()
+      .range([ 0, width ])
+      .domain(data.map(function(d) { return d.Country; }))
+      .padding(0.2);
+    targetSVG.append("g")
+      .attr("class", "x-axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(xScale).tickSizeOuter(0))
+      .selectAll("text")
+        .attr("transform", "translate(-10,0)rotate(-45)")
+        .style("text-anchor", "end")
+        .style("font-size", "6px");
+
+    //yDomainScaleForAxis
     var yScale = d3.scaleLinear()
-      .domain([0, yDomainScaleForAxis])
+      .domain([0, 100])
       .range([height, 0]);
-      targetSVG.append("g")
+
+    targetSVG.append("g")
       .attr("class", "y-axis")
       .call(d3.axisLeft(yScale));
   
