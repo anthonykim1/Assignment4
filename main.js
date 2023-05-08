@@ -241,6 +241,7 @@ function onCategoryChangedTwo() {
 }
 
 /////////////////////////////////////////////////////// Refactoring Completed for bar charts
+var svgToBarColor = new Map();
 function createBarChart(nameOfDataset, targetSVG, width, height, margin, yDomainScaleForAxis, columnTitle, isLog, barCategory) {
   
   d3.csv(nameOfDataset).then(function(dataset) {
@@ -256,8 +257,17 @@ function createBarChart(nameOfDataset, targetSVG, width, height, margin, yDomain
   } else {
     barColor = "#69b3a2";
   }
+  var ourSVGKey;
+  if (targetSVG == svg || targetSVG === svg) {
+    ourSVGKey = "svg"
+    svgToBarColor.set("svg", barColor);
+  } else {
+    ourSVGKey = "svg2"
+    svgToBarColor.set("svg2", barColor);
+  }
+  console.log(svgToBarColor);
   
-    
+
   
   // clear caching 
   targetSVG.selectAll(".bar").remove();
@@ -354,7 +364,8 @@ function createBarChart(nameOfDataset, targetSVG, width, height, margin, yDomain
         .on("mouseout", function(d) {
           if (!d3.select(this).classed("bar selected")) {
             unClickBaseline(d.Country, callOther); // call to trigger baseline un-highlighting in both places
-            d3.select(this).attr("fill", "#69b3a2");
+            // d3.select(this).attr("fill", "#69b3a2");
+            d3.select(this).attr("fill", svgToBarColor.get(ourSVGKey))
             svg.selectAll(".bar-label").remove();
             svg2.selectAll(".bar-label").remove();
           }
@@ -368,7 +379,8 @@ function createBarChart(nameOfDataset, targetSVG, width, height, margin, yDomain
           // add the "selected" class to the clicked bar
           d3.select(this).classed("selected", true);
           // set the fill color of the selected bar to red
-          targetSVG.selectAll(".bar").attr("fill", "#69b3a2")
+          // targetSVG.selectAll(".bar").attr("fill", "#69b3a2")
+          targetSVG.selectAll(".bar").attr("fill", svgToBarColor.get(ourSVGKey))
           d3.select(this).attr("fill", "#ffec59");
   
           baseline_value = yScale(+d[columnTitle]); 
@@ -458,7 +470,8 @@ function createBarChart(nameOfDataset, targetSVG, width, height, margin, yDomain
       .on("mouseout", function(d) {
         if (!d3.select(this).classed("bar selected")) {
           unClickBaseline(d.Country, callOther); // call to trigger baseline un-highlighting in both places
-          d3.select(this).attr("fill", "#69b3a2");
+          // d3.select(this).attr("fill", "#69b3a2");
+          d3.select(this).attr("fill", barColor);
           svg.selectAll(".bar-label").remove();
           svg2.selectAll(".bar-label").remove();
         }
@@ -472,7 +485,8 @@ function createBarChart(nameOfDataset, targetSVG, width, height, margin, yDomain
         // add the "selected" class to the clicked bar
         d3.select(this).classed("selected", true);
         // set the fill color of the selected bar to red
-        targetSVG.selectAll(".bar").attr("fill", "#69b3a2")
+        // targetSVG.selectAll(".bar").attr("fill", "#69b3a2")
+        targetSVG.selectAll(".bar").attr("fill", barColor)
         d3.select(this).attr("fill", "#ffec59");
 
         baseline_value = yScale(+d[columnTitle]); 
@@ -519,8 +533,8 @@ function syncBaseline(countryName, whichSVGToCall, columnTitle) {
         // add the "selected" class to the clicked bar
         d3.select(this).classed("selected", true);
         // set the fill color of the selected bar to red
-        svg2.selectAll(".bar").attr("fill", "#69b3a2")
-
+        // svg2.selectAll(".bar").attr("fill", "#69b3a2")
+        svg2.selectAll(".bar").attr("fill", svgToBarColor.get("svg2"))
         d3.select(this).attr("fill", "#ffec59");
         // d3.select(this).attr('y') ----- example for getting specific attribute
         
@@ -540,7 +554,8 @@ function syncBaseline(countryName, whichSVGToCall, columnTitle) {
           .style("stroke", "#ffec59")
           .style("stroke-dasharray", ("3, 3"));
       } else {
-        d3.select(this).attr("fill", "#69b3a2");
+        // d3.select(this).attr("fill", "#69b3a2");
+        d3.select(this).attr("fill", svgToBarColor.get("svg2"));
       }
       
     })
@@ -555,8 +570,8 @@ function syncBaseline(countryName, whichSVGToCall, columnTitle) {
         // add the "selected" class to the clicked bar
         d3.select(this).classed("selected", true);
         
-        svg.selectAll(".bar").attr("fill", "#69b3a2")  // need bar color
-
+        // svg.selectAll(".bar").attr("fill", "#69b3a2")  // need bar col
+        svg.selectAll(".bar").attr("fill", svgToBarColor.get("svg"))
         d3.select(this).attr("fill", "#ffec59");
         // d3.select(this).attr('y') ----- example for getting specific attribute
         // need to show country name too
@@ -576,7 +591,8 @@ function syncBaseline(countryName, whichSVGToCall, columnTitle) {
           .style("stroke", "#ffec59")
           .style("stroke-dasharray", ("3, 3"));
       } else {
-        d3.select(this).attr("fill", "#69b3a2");
+        // d3.select(this).attr("fill", "#69b3a2");
+        d3.select(this).attr("fill", svgToBarColor.get("svg"))
       }
       // d3.select(i).attr("fill", "red");
     })
@@ -926,7 +942,8 @@ function onClickBaseline(countryName, whichSVGToCall) { // breakpoint
           .text(d.Country)
         } else {
           if (!d3.select(this).classed("bar selected")) {
-            d3.select(this).attr("fill", "#69b3a2");
+            // d3.select(this).attr("fill", "#69b3a2");
+            d3.select(this).attr("fill", svgToBarColor.get("svg2"));
           }
         }
         // d3.select(i).attr("fill", "red");
@@ -958,14 +975,16 @@ function unClickBaseline(countryName, whichSVGToCall) { // breakpoint
   } else {
     svg2.selectAll('rect').each(function(d,i) {
       if (d.Country == countryName) {
-        d3.select(this).attr("fill", "#69b3a2");
+        // d3.select(this).attr("fill", "#69b3a2");
+        d3.select(this).attr("fill", svgToBarColor.get("svg2"));
       }
       // d3.select(i).attr("fill", "red");
     })
   
     svg.selectAll('rect').each(function(d,i) {
       if (d.Country == countryName) {
-        d3.select(this).attr("fill", "#69b3a2");
+        // d3.select(this).attr("fill", "#69b3a2");
+        d3.select(this).attr("fill", svgToBarColor.get("svg"));
       }
       // d3.select(i).attr("fill", "red");
     })
