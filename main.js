@@ -351,7 +351,7 @@ function createBarChart(nameOfDataset, targetSVG, width, height, margin, yDomain
           d3.select(this).classed("selected", true);
           // set the fill color of the selected bar to red
           targetSVG.selectAll(".bar").attr("fill", "#69b3a2")
-          d3.select(this).attr("fill", "yellow");
+          d3.select(this).attr("fill", "#ffec59");
   
           baseline_value = yScale(+d[columnTitle]); 
           targetSVG.append("line")
@@ -454,7 +454,7 @@ function createBarChart(nameOfDataset, targetSVG, width, height, margin, yDomain
         d3.select(this).classed("selected", true);
         // set the fill color of the selected bar to red
         targetSVG.selectAll(".bar").attr("fill", "#69b3a2")
-        d3.select(this).attr("fill", "yellow");
+        d3.select(this).attr("fill", "#ffec59");
 
         baseline_value = yScale(+d[columnTitle]); 
         targetSVG.append("line")
@@ -502,7 +502,7 @@ function syncBaseline(countryName, whichSVGToCall, columnTitle) {
         // set the fill color of the selected bar to red
         svg2.selectAll(".bar").attr("fill", "#69b3a2")
 
-        d3.select(this).attr("fill", "yellow");
+        d3.select(this).attr("fill", "#ffec59");
         // d3.select(this).attr('y') ----- example for getting specific attribute
         
         svg2.append("text")
@@ -538,7 +538,7 @@ function syncBaseline(countryName, whichSVGToCall, columnTitle) {
         // set the fill color of the selected bar to red
         svg.selectAll(".bar").attr("fill", "#69b3a2")
 
-        d3.select(this).attr("fill", "yellow");
+        d3.select(this).attr("fill", "#ffec59");
         // d3.select(this).attr('y') ----- example for getting specific attribute
         // need to show country name too
         svg.append("text")
@@ -742,7 +742,7 @@ svg2.append("text").attr("x", 220).attr("y", 160).text("variable B").style("font
       .range(['#ff5768','#00A5E3','#69b3a2']) // red, blue, green
         //stack the data? --> stack per subgroup
     } else {
-      color = d3.scaleOrdinal().domain(subgroups).range(["#00ff00", "#ff5768"])
+      color = d3.scaleOrdinal().domain(subgroups).range(["#6c88c4", "#ff5768"])
     }
     
     var stackedData = d3.stack()
