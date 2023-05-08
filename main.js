@@ -270,8 +270,6 @@ function createBarChart(nameOfDataset, targetSVG, width, height, margin, yDomain
 
   
   // clear caching 
-  targetSVG.selectAll("text").remove();
-  targetSVG.selectAll("circle").remove();
   targetSVG.selectAll(".bar").remove();
   targetSVG.select(".x-axis").remove();
   targetSVG.select(".y-axis").remove();
@@ -526,7 +524,6 @@ function createBarChart(nameOfDataset, targetSVG, width, height, margin, yDomain
 function syncBaseline(countryName, whichSVGToCall, columnTitle) {
   if(whichSVGToCall === "svg2" && !stackedExists2) {
     svg2.selectAll("bar-label").remove(); 
-    svg2.selectAll("text").remoe(); 
     svg2.selectAll('rect').each(function(d,i) {
       if (d.Country === countryName) {
         svg2.select(".baseline").remove();
@@ -564,7 +561,6 @@ function syncBaseline(countryName, whichSVGToCall, columnTitle) {
     })
   } else if(whichSVGToCall === "svg" && !stackedExists1){
     svg.selectAll("bar-label").remove(); 
-    svg.selectAll("text").remove();
     svg.selectAll('rect').each(function(d,i) {
       if (d.Country === countryName) {
         svg.select(".baseline").remove();
@@ -738,23 +734,21 @@ function createStackedBarChart(nameOfDataset, targetSVG, width, height, margin, 
         // GDP column name means gdp - whatever column name
         return d3.descending( (+a["GDPperCapita"]) + (+a["health"]), (+b["GDPperCapita"]) + (+b["health"]))
       });
-      svg.append("circle").attr("cx",400).attr("cy",-20).attr("r", 6).style("fill", "#6c88c4")
-      svg.append("circle").attr("cx",600).attr("cy",-20).attr("r", 6).style("fill", "#ff5768")
-      svg.append("text").attr("x", 420).attr("y", -20).text("GDP per capita in $ (PPP)").style("font-size", "15px").attr("alignment-baseline","middle")
-      svg.append("text").attr("x", 620).attr("y", -20).text("health expenditure per person ($)").style("font-size", "15px").attr("alignment-baseline","middle")
+      svg.append("circle").attr("cx",200).attr("cy",130).attr("r", 6).style("fill", "#69b3a2")
+svg.append("circle").attr("cx",200).attr("cy",160).attr("r", 6).style("fill", "#404080")
+svg.append("text").attr("x", 220).attr("y", 130).text("variable A").style("font-size", "15px").attr("alignment-baseline","middle")
+svg.append("text").attr("x", 220).attr("y", 160).text("variable B").style("font-size", "15px").attr("alignment-baseline","middle")
     } else {
       console.log("reach here");
       data.sort(function(a, b) {
         // GDP column name means gdp - whatever column name
         return d3.descending( (+a["GDP"]) + (+a["health"]) + (+a["military"]), (+b["GDP"]) + (+b["health"]) + (+b["military"]))
       });
-      svg2.append("circle").attr("cx",400).attr("cy",-20).attr("r", 6).style("fill", "#69b3a2")
-      svg2.append("circle").attr("cx",600).attr("cy",-20).attr("r", 6).style("fill", "#00A5E3")
-      svg2.append("circle").attr("cx",840).attr("cy",-20).attr("r", 6).style("fill", "#ff5768")
-      svg2.append("text").attr("x", 420).attr("y", -20).text("GDP ($USD billions PPP)").style("font-size", "15px").attr("alignment-baseline","middle")
-      svg2.append("text").attr("x", 620).attr("y", -20).text("Military Spending as % of GDP").style("font-size", "15px").attr("alignment-baseline","middle")
-      svg2.append("text").attr("x", 860).attr("y", -20).text("health expenditure % of GDP").style("font-size", "15px").attr("alignment-baseline","middle")
-    }  
+      svg2.append("circle").attr("cx",200).attr("cy",130).attr("r", 6).style("fill", "#69b3a2")
+svg2.append("circle").attr("cx",200).attr("cy",160).attr("r", 6).style("fill", "#404080")
+svg2.append("text").attr("x", 220).attr("y", 130).text("variable A").style("font-size", "15px").attr("alignment-baseline","middle")
+svg2.append("text").attr("x", 220).attr("y", 160).text("variable B").style("font-size", "15px").attr("alignment-baseline","middle")
+    }
 
     var subgroups = data.columns.slice(1); // list of health value, military value, GDP without H and M columns.
     // console.log(subgroups);
@@ -902,7 +896,7 @@ function onClickBaseline(countryName, whichSVGToCall) { // breakpoint
         svg2.append("text")
         .attr("class", "bar-label")
         .attr("x", d3.select(this).attr('x'))
-        .attr("y", d3.select(this).attr('y') - 10)
+        .attr("y", d3.select(this).attr('y'))
         .attr("text-anchor", "middle")
         .style("font-size", "10px")
         .text(d.Country)
@@ -920,7 +914,7 @@ function onClickBaseline(countryName, whichSVGToCall) { // breakpoint
         svg.append("text")
         .attr("class", "bar-label")
         .attr("x", d3.select(this).attr('x'))
-        .attr("y", d3.select(this).attr('y') - 10)
+        .attr("y", d3.select(this).attr('y'))
         .attr("text-anchor", "middle")
         .style("font-size", "10px")
         .text(d.Country)
@@ -942,7 +936,7 @@ function onClickBaseline(countryName, whichSVGToCall) { // breakpoint
           svg2.append("text")
           .attr("class", "bar-label")
           .attr("x", d3.select(this).attr('x'))
-          .attr("y", d3.select(this).attr('y') - 10)
+          .attr("y", d3.select(this).attr('y'))
           .attr("text-anchor", "middle")
           .style("font-size", "10px")
           .text(d.Country)
@@ -961,7 +955,7 @@ function onClickBaseline(countryName, whichSVGToCall) { // breakpoint
           svg.append("text")
           .attr("class", "bar-label")
           .attr("x", d3.select(this).attr('x'))
-          .attr("y", d3.select(this).attr('y') - 10)
+          .attr("y", d3.select(this).attr('y'))
           .attr("text-anchor", "middle")
           .style("font-size", "10px")
           .text(d.Country)
