@@ -360,7 +360,7 @@ function createBarChart(nameOfDataset, targetSVG, width, height, margin, yDomain
             .attr("y1", baseline_value)
             .attr("x2", width)
             .attr("y2", baseline_value)
-            .style("stroke", "#999")
+            .style("stroke", "#ffec59")
             .style("stroke-dasharray", ("3, 3"));
           targetSVG.append("text")
             .attr("class", "baseline-country")
@@ -463,7 +463,7 @@ function createBarChart(nameOfDataset, targetSVG, width, height, margin, yDomain
           .attr("y1", baseline_value)
           .attr("x2", width)
           .attr("y2", baseline_value)
-          .style("stroke", "#999")
+          .style("stroke", "#ffec59")
           .style("stroke-dasharray", ("3, 3"));
         targetSVG.append("text")
           .attr("class", "baseline-country")
@@ -518,7 +518,7 @@ function syncBaseline(countryName, whichSVGToCall, columnTitle) {
           .attr("y1", d3.select(this).attr('y'))
           .attr("x2", width)
           .attr("y2", d3.select(this).attr('y'))
-          .style("stroke", "#999")
+          .style("stroke", "#ffec59")
           .style("stroke-dasharray", ("3, 3"));
       } else {
         d3.select(this).attr("fill", "#69b3a2");
@@ -554,7 +554,7 @@ function syncBaseline(countryName, whichSVGToCall, columnTitle) {
           .attr("y1", d3.select(this).attr('y'))
           .attr("x2", width)
           .attr("y2", d3.select(this).attr('y'))
-          .style("stroke", "#999")
+          .style("stroke", "#ffec59")
           .style("stroke-dasharray", ("3, 3"));
       } else {
         d3.select(this).attr("fill", "#69b3a2");
@@ -842,7 +842,7 @@ function onClickBaseline(countryName, whichSVGToCall) { // breakpoint
   if(stackedExists1 && whichSVGToCall == "svg2"){
     svg2.selectAll('rect').each(function(d,i) {
       if (d.Country == countryName && !d3.select(this).classed("bar selected")) {
-        d3.select(this).attr("fill", "red");
+        d3.select(this).attr("fill", "red"); 
         svg2.append("text")
         .attr("class", "bar-label")
         .attr("x", d3.select(this).attr('x'))
@@ -860,7 +860,7 @@ function onClickBaseline(countryName, whichSVGToCall) { // breakpoint
   } else if(stackedExists2 && whichSVGToCall == "svg"){
     svg.selectAll('rect').each(function(d,i) {
       if (d.Country == countryName && !d3.select(this).classed("bar selected")) {
-        d3.select(this).attr("fill", "red");
+        d3.select(this).attr("fill", "red"); 
         svg.append("text")
         .attr("class", "bar-label")
         .attr("x", d3.select(this).attr('x'))
