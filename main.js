@@ -554,8 +554,8 @@ function syncBaseline(countryName, whichSVGToCall, columnTitle) {
         svg.selectAll(".bar").classed("selected", false);
         // add the "selected" class to the clicked bar
         d3.select(this).classed("selected", true);
-        // set the fill color of the selected bar to red
-        svg.selectAll(".bar").attr("fill", "#69b3a2")
+        
+        svg.selectAll(".bar").attr("fill", "#69b3a2")  // need bar color
 
         d3.select(this).attr("fill", "#ffec59");
         // d3.select(this).attr('y') ----- example for getting specific attribute
