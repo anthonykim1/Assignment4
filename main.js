@@ -32,7 +32,7 @@ var isSVG1 = true;
 var title = '';
 var svgWidth = 300;
 var svgHeight = 150;
-var margin3 = { top: 20, right: 20, bottom: 30, left: 70 };
+var margin3 = { top: 30, right: 20, bottom: 30, left: 70 };
 var width3 = svgWidth - margin3.left - margin3.right;
 var height3 = svgHeight - margin3.top - margin3.bottom;
 var svg3;
@@ -45,7 +45,10 @@ function displayLineChart(countryName, targetSVG) {
       svg3.select(".yAxis").remove();
       svg3.select(".title").remove();
       svg3.select(".line").remove();
+      svg3.select(".title2").remove();
+      svg3.select(".lineCB").remove();
     }
+
     if (targetSVG === "svg2") {
       svg3 = svg.append("svg")
         .attr('class', 'lineC')
@@ -61,6 +64,15 @@ function displayLineChart(countryName, targetSVG) {
         .append("g")
         .attr("transform", "translate(" + margin3.left + "," + margin3.top + ")");
     }
+
+    svg3.append('rect')
+      .attr('class', 'lineCB')
+      .attr("x", 0)
+      .attr("y", 0)
+      .attr("width", width3)
+      .attr("height", height3)
+      .style("fill", "#DFDFDF");
+
     var countryData = csvdata.filter((d) => d["indicator"] === countryName);
 
     // Define the data for the GDP values
@@ -72,18 +84,6 @@ function displayLineChart(countryName, targetSVG) {
         { year: 2018, gdp: parseFloat(countryData[0]['health expenditure per person 2018'].replaceAll(',',''))},
         { year: 2019, gdp: parseFloat(countryData[0]['health expenditure per person 2019'].replaceAll(',',''))}
       ];
-      /*
-      data = [
-        { year: 2014, gdp: parseFloat(countryData[0]['health expenditure % of GDP 2014']) },
-        { year: 2015, gdp: parseFloat(countryData[0]['health expenditure % of GDP 2015']) },
-        { year: 2016, gdp: parseFloat(countryData[0]['health expenditure % of GDP 2016']) },
-        { year: 2017, gdp: parseFloat(countryData[0]['health expenditure % of GDP 2017']) },
-        { year: 2018, gdp: parseFloat(countryData[0]['health expenditure % of GDP 2018']) },
-        { year: 2019, gdp: parseFloat(countryData[0]['health expenditure % of GDP 2019']) },
-        { year: 2020, gdp: parseFloat(countryData[0]['health expenditure % of GDP 2020']) },
-        { year: 2021, gdp: parseFloat(countryData[0]['health expenditure % of GDP 2021 or latest']) }
-      ];
-      */
       categoryIs = 'Health';
       title = 'Health Expenditure per Year';
     } else if (currentCategory === 'unemployment (%) 2018' || currentCategory === 'unemployment (%) 2021') {
@@ -154,11 +154,19 @@ function displayLineChart(countryName, targetSVG) {
       .attr("class", "title")
       .attr("transform", "rotate(-90)")
       .attr("y", -40 - margin3.right)
-      .attr("x", 75 - (height / 2))
+      .attr("x", -1 - (height3 / 2))
       .attr("dy", "1em")
       .style("text-anchor", "middle")
       .style("font-size", "10px")
       .text(title);
+
+    svg3.append("text")
+      .attr("class", "title2")
+      .attr("y", -110 + width3/2)
+      .attr("x", 90 + margin3.top/2)
+      .attr("text-anchor", "middle")
+      .attr("font-size", "12px")
+      .text(countryName);
 
     // Define the line generator
     var line = d3.line()
@@ -171,7 +179,7 @@ function displayLineChart(countryName, targetSVG) {
       .attr("class", "line")
       .datum(data)
       .attr("fill", "none")
-      .attr("stroke", "pink")
+      .attr("stroke", "#FFC859")
       .attr("stroke-width", 3)
       .attr("d", line);
 
@@ -203,6 +211,8 @@ function onSortingCategoryChanged(){
       svg3.select(".yAxis").remove();
       svg3.select(".title").remove();
       svg3.select(".line").remove();
+      svg3.select(".title2").remove();
+      svg3.select(".lineCB").remove();
     }
 }
 // Drop down choice updated, fire signal to display the "correct" chart for top chart
@@ -220,6 +230,8 @@ function onCategoryChanged() {
     svg3.select(".yAxis").remove();
     svg3.select(".title").remove();
     svg3.select(".line").remove();
+    svg3.select(".title2").remove();
+    svg3.select(".lineCB").remove();
   }
 }
 
@@ -237,6 +249,8 @@ function onCategoryChangedTwo() {
     svg3.select(".yAxis").remove();
     svg3.select(".title").remove();
     svg3.select(".line").remove();
+    svg3.select(".title2").remove();
+    svg3.select(".lineCB").remove();
   }
 }
 
@@ -513,7 +527,7 @@ function createBarChart(nameOfDataset, targetSVG, width, height, margin, yDomain
       });
       
       // Animation
-      targetSVG.selectAll("rect")
+      targetSVG.selectAll("rect[class]:not(.lineCB)")
       .transition()
       .duration(800)
       .attr("y", function(d) { return yScale(+d[columnTitle]);  })
@@ -526,7 +540,7 @@ function createBarChart(nameOfDataset, targetSVG, width, height, margin, yDomain
 function syncBaseline(countryName, whichSVGToCall, columnTitle) {
   if(whichSVGToCall === "svg2" && !stackedExists2) {
     svg2.selectAll(".bar-label").remove(); 
-    svg2.selectAll('rect').each(function(d,i) {
+    svg2.selectAll('rect[class]:not(.lineCB)').each(function(d,i) {
       if (d.Country === countryName) {
         svg2.select(".baseline").remove();
         svg2.select(".baseline-country").remove();
@@ -563,7 +577,7 @@ function syncBaseline(countryName, whichSVGToCall, columnTitle) {
     })
   } else if(whichSVGToCall === "svg" && !stackedExists1){
     svg.selectAll(".bar-label").remove(); 
-    svg.selectAll('rect').each(function(d,i) {
+    svg.selectAll('rect[class]:not(.lineCB)').each(function(d,i) {
       if (d.Country === countryName) {
         svg.select(".baseline").remove();
         svg.select(".baseline-country").remove();
@@ -834,7 +848,7 @@ function createStackedBarChart(nameOfDataset, targetSVG, width, height, margin, 
       .enter().append("g")
         .attr("fill", function(d) { return color(d.key); })
         .attr("class", function(d){ return "myRect " + d.key }) // 5/3 animation attempt
-        .selectAll("rect")
+        .selectAll("rect[class]:not(.lineCB)")
         // enter a second time = loop subgroup per subgroup to add all rectangles
         .data(function(d) { return d; })
         .enter().append("rect")
@@ -894,7 +908,7 @@ function onClickBaseline(countryName, whichSVGToCall) { // breakpoint
   //svg2.select(".baseline").remove();
   //svg2.select(".baseline-country").remove();
   if(stackedExists1 && whichSVGToCall == "svg2"){
-    svg2.selectAll('rect').each(function(d,i) {
+    svg2.selectAll('rect[class]:not(.lineCB)').each(function(d,i) {
       if (d.Country == countryName && !d3.select(this).classed("bar selected")) {
         d3.select(this).attr("fill", "red"); 
         svg2.append("text")
@@ -912,7 +926,7 @@ function onClickBaseline(countryName, whichSVGToCall) { // breakpoint
       // d3.select(i).attr("fill", "red");
     })
   } else if(stackedExists2 && whichSVGToCall == "svg"){
-    svg.selectAll('rect').each(function(d,i) {
+    svg.selectAll('rect[class]:not(.lineCB)').each(function(d,i) {
       if (d.Country == countryName && !d3.select(this).classed("bar selected")) {
         d3.select(this).attr("fill", "red"); 
         svg.append("text")
@@ -932,7 +946,7 @@ function onClickBaseline(countryName, whichSVGToCall) { // breakpoint
 
   } else {
     if (whichSVGToCall == "svg2") {
-      svg2.selectAll('rect').each(function(d,i) {
+      svg2.selectAll('rect[class]:not(.lineCB)').each(function(d,i) {
         if (d.Country == countryName && !d3.select(this).classed("bar selected")) {
           d3.select(this).attr("fill", "red");
           // d3.select(this).attr('y') ----- example for getting specific attribute
@@ -953,7 +967,7 @@ function onClickBaseline(countryName, whichSVGToCall) { // breakpoint
         // d3.select(i).attr("fill", "red");
       })
     } else if (whichSVGToCall == "svg") {
-      svg.selectAll('rect').each(function(d,i) {
+      svg.selectAll('rect[class]:not(.lineCB)').each(function(d,i) {
         if (d.Country == countryName && !d3.select(this).classed("bar selected")) {
           d3.select(this).attr("fill", "red");
           svg.append("text")
@@ -977,7 +991,7 @@ function unClickBaseline(countryName, whichSVGToCall) { // breakpoint
   if((whichSVGToCall == "svg" && stackedExists1) || (whichSVGToCall == "svg2" && stackedExists2)) {
     
   } else {
-    svg2.selectAll('rect').each(function(d,i) {
+    svg2.selectAll('rect[class]:not(.lineCB)').each(function(d,i) {
       if (d.Country == countryName) {
         // d3.select(this).attr("fill", "#69b3a2");
         d3.select(this).attr("fill", svgToBarColor.get("svg2"));
@@ -985,7 +999,7 @@ function unClickBaseline(countryName, whichSVGToCall) { // breakpoint
       // d3.select(i).attr("fill", "red");
     })
   
-    svg.selectAll('rect').each(function(d,i) {
+    svg.selectAll('rect[class]:not(.lineCB)').each(function(d,i) {
       if (d.Country == countryName) {
         // d3.select(this).attr("fill", "#69b3a2");
         d3.select(this).attr("fill", svgToBarColor.get("svg"));
