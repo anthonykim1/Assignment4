@@ -240,7 +240,7 @@ function onCategoryChangedTwo() {
   }
 }
 
-/////////////////////////////////////////////////////// Refactoring Completed for bar charts - Caleb: add ur baseline fix here again
+/////////////////////////////////////////////////////// Refactoring Completed for bar charts
 function createBarChart(nameOfDataset, targetSVG, width, height, margin, yDomainScaleForAxis, columnTitle, isLog) {
   d3.csv(nameOfDataset).then(function(dataset) {
   // clear caching 
@@ -257,7 +257,6 @@ function createBarChart(nameOfDataset, targetSVG, width, height, margin, yDomain
   var yearSplitter = tempColumnTitle.split(/(\s+)/).slice(-1);
   
   data.sort(function(a,b) {
-    //console.log(sortingValue);
     return d3.descending(+a[sortingValue], +b[sortingValue]);
   });
 
@@ -411,7 +410,7 @@ function syncBaseline(countryName, whichSVGToCall) {
 
         d3.select(this).attr("fill", "yellow");
         // d3.select(this).attr('y') ----- example for getting specific attribute
-        // need to show country name too
+        
         svg2.append("text")
         .attr("class", "baseline-country")
         .attr("x", d3.select(this).attr('x'))
@@ -430,7 +429,7 @@ function syncBaseline(countryName, whichSVGToCall) {
       } else {
         d3.select(this).attr("fill", "#69b3a2");
       }
-      // d3.select(i).attr("fill", "red");
+      
     })
   } else if(whichSVGToCall === "svg" && !stackedExists1){
     svg.selectAll("bar-label").remove(); 
@@ -477,8 +476,8 @@ function syncBaseline(countryName, whichSVGToCall) {
 
 //<rect class="bar" x="400.4707233065442" y="39.03000000000001" height="199.655" width="6.934557979334098" stroke="grey"></rect>
 
-/////////////////////////////////////////////////////// Refactoring completed --- dont touch below this code.
-// function createBarChart(nameOfDataset, targetSVG, width, height, margin, yDomainScaleForAxis, columnTitle) // 
+/////////////////////////////////////////////////////// Refactoring completed --- 
+ 
 
 // display 2021 GDP per capita for top chart as default
 createBarChart("dataset.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2021", false);
@@ -566,7 +565,7 @@ function updateChartTwo(category) {
   }
 }
 
-///////////// Refactoring for stacked bar chart in progress ///////////////////
+///////////// Refactoring for stacked bar chart ///////////////////
 function createStackedBarChart(nameOfDataset, targetSVG, width, height, margin, yDomainScaleForAxis, columnTitle) {
   d3.csv(nameOfDataset).then(function(data) {
     targetSVG.selectAll(".bar").remove();
@@ -588,14 +587,12 @@ function createStackedBarChart(nameOfDataset, targetSVG, width, height, margin, 
       console.log("here");
       // add only gdp and health
       data.sort(function(a, b) {
-        // console.log((+a["GDP ($USD billions PPP) 2018"], +b["GDP ($USD billions PPP) 2018"]));
         // GDP column name means gdp - whatever column name
         return d3.descending( (+a["GDPperCapita"]) + (+a["health"]), (+b["GDPperCapita"]) + (+b["health"]))
       });
     } else {
       console.log("reach here");
       data.sort(function(a, b) {
-        // console.log((+a["GDP ($USD billions PPP) 2018"], +b["GDP ($USD billions PPP) 2018"]));
         // GDP column name means gdp - whatever column name
         return d3.descending( (+a["GDP"]) + (+a["health"]) + (+a["military"]), (+b["GDP"]) + (+b["health"]) + (+b["military"]))
       });
@@ -697,8 +694,7 @@ function createStackedBarChart(nameOfDataset, targetSVG, width, height, margin, 
             d3.selectAll(".myRect").style("opacity", 0.3)
           
             var taylorMade = subgroupName.replaceAll(' ', '.');
-            // console.log(taylorMade);
-            // console.log(d3.selectAll(".myRect."+taylorMade));
+            
             d3.selectAll(".myRect."+taylorMade).style("opacity", 0.7);
             targetSVG.append("text")
               .attr("class", "bar-label")
@@ -721,7 +717,7 @@ function createStackedBarChart(nameOfDataset, targetSVG, width, height, margin, 
   })
 }
 
-//////////////// Refactoring for stacked bar chart in progress /////////////////
+//////////////// Refactoring for stacked bar chart /////////////////
 
 
 // Let other svg (top,bottom) know that one chart clicked into baseline.
