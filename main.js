@@ -668,7 +668,7 @@ function createStackedBarChart(nameOfDataset, targetSVG, width, height, margin, 
     targetSVG.select(".y-axis-title").remove();
     targetSVG.select(".baseline").remove();
     targetSVG.select(".baseline-country").remove();
-
+    console.log(columnTitle);
     var callOther;
     if (targetSVG == svg || targetSVG === svg) {
       callOther = "svg2";
