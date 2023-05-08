@@ -1,10 +1,10 @@
 // python -m http.server 8080       
-var margin = {top: 30, right: 30, bottom: 70, left: 70},
+var margin = {top: 35, right: 30, bottom: 70, left: 70},
     width = 1600 - margin.left - margin.right,
     height = 350 - margin.top - margin.bottom;
 
 // margin for second bar chart
-var marginTwo = {top: 30, right: 30, bottom: 70, left: 70},
+var marginTwo = {top: 35, right: 30, bottom: 70, left: 70},
   width2 = 1600 - marginTwo.left - marginTwo.right, // 900 => 2000 testing
   height2 = 350 - marginTwo.top - marginTwo.bottom; // 400 => 600 testing
 
@@ -53,14 +53,14 @@ function displayLineChart(countryName, targetSVG) {
       svg3 = svg.append("svg")
         .attr('class', 'lineC')
         .attr("x", width - 300)
-        .attr("y", -45)
+        .attr("y", -51)
         .append("g")
         .attr("transform", "translate(" + margin3.left + "," + margin3.top + ")");
     } else {
       svg3 = svg2.append("svg")
         .attr('class', 'lineC')
         .attr("x", width - 300)
-        .attr("y", -45)
+        .attr("y", -51)
         .append("g")
         .attr("transform", "translate(" + margin3.left + "," + margin3.top + ")");
     }
@@ -71,7 +71,8 @@ function displayLineChart(countryName, targetSVG) {
       .attr("y", 0)
       .attr("width", width3)
       .attr("height", height3)
-      .style("fill", "#DFDFDF");
+      .style("fill", "#DFDFDF")
+      .attr("opacity", 0.7);
 
     var countryData = csvdata.filter((d) => d["indicator"] === countryName);
 
