@@ -511,7 +511,7 @@ function syncBaseline(countryName, whichSVGToCall, columnTitle) {
         .attr("y", d3.select(this).attr('y') - 10)
         .attr("text-anchor", "middle")
         .style("font-size", "10px")
-        .text(d.Country + " " + d[columnTitle])
+        .text(d.Country + " " + d[chart2Category])
         svg2.append("line")
           .attr("class", "baseline")
           .attr("x1", 0)
@@ -531,7 +531,7 @@ function syncBaseline(countryName, whichSVGToCall, columnTitle) {
       if (d.Country === countryName) {
         svg.select(".baseline").remove();
         svg.select(".baseline-country").remove();
-
+        console.log(chart1Category);
         svg.selectAll(".bar").classed("selected", false);
         // add the "selected" class to the clicked bar
         d3.select(this).classed("selected", true);
@@ -547,7 +547,7 @@ function syncBaseline(countryName, whichSVGToCall, columnTitle) {
         .attr("y", d3.select(this).attr('y')-10)
         .attr("text-anchor", "middle")
         .style("font-size", "10px")
-        .text(d.Country + " " + d[columnTitle])
+        .text(d.Country + " " + d[chart1Category])
         svg.append("line")
           .attr("class", "baseline")
           .attr("x1", 0)
@@ -591,31 +591,40 @@ createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 23000, "GDP ($US
 // Let us know what we selected from the top dropdown.
 var stackedExists1 = false; 
 var stackedExists2 = false; 
+var chart1Category = "GDP per capita in $ (PPP) 2018"; 
 function updateChart(category){
   //console.log("updating chart #1");
   if(category === "gdp-per-capita-2018-bar") {
     stackedExists1 = false; 
+    chart1Category =  "GDP per capita in $ (PPP) 2018";
     createBarChart("dataset.csv", svg, width, height, margin, 120000, "GDP per capita in $ (PPP) 2018", false);
   } else if (category === "gdp-per-capita-2019-bar") {
+    chart1Category =  "GDP per capita in $ (PPP) 2019";
     stackedExists1 = false; 
     createBarChart("dataset.csv", svg, width, height, margin, 120000, "GDP per capita in $ (PPP) 2019", false);
   } else if (category === "gdp-per-capita-2020-bar") {
     stackedExists1 = false; 
+    chart1Category =  "GDP per capita in $ (PPP) 2020";
     createBarChart("dataset.csv", svg, width, height, margin, 120000, "GDP per capita in $ (PPP) 2020", false);
   } else if (category === "gdp-per-capita-2021-bar") {
     stackedExists1 = false; 
+    chart1Category =  "GDP per capita in $ (PPP) 2021";
     createBarChart("dataset.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2021", false);
   } else if (category === "health-gdp-cap-2018-stacked") {
     stackedExists1 = true; 
+    chart1Category =  "GDP per capita in $ (PPP) 2018";
     createStackedBarChart("2018GDPperCapitaHealth.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2018");
   } else if (category === "health-gdp-cap-2019-stacked") {
     stackedExists1 = true; 
+    chart1Category =  "GDP per capita in $ (PPP) 2019";
     createStackedBarChart("2019GDPperCapitaHealth.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2019");
   } else if (category === "health-2018-bar") {
     stackedExists1 = false; 
+    chart1Category =  "health expenditure per person ($) 2018";
     createBarChart("dataset.csv", svg, width, height, margin, 11000, "health expenditure per person ($) 2018", false);
   } else if (category === "health-2019-bar") {
     stackedExists1 = false; 
+    chart1Category =  "health expenditure per person ($) 2018";
     createBarChart("dataset.csv", svg, width, height, margin, 11000, "health expenditure per person ($) 2019", false);
   }
 }
@@ -630,31 +639,39 @@ function updateChart(category){
 //     createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 50, "unemployment (%) 2021"); 
 //   }
 // }
-
+var chart2Category = "GDP ($USD billions PPP) 2018";
 function updateChartTwo(category) {
   if(category === "GDP-2018-bar") {
     stackedExists2 = false; 
+    chart2Category =  "GDP ($USD billions PPP) 2018";
     createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 23000, "GDP ($USD billions PPP) 2018", true);
   } else if (category === "GDP-2019-bar") {
     stackedExists2 = false; 
+    chart2Category =  "GDP ($USD billions PPP) 2019";
     createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 23000, "GDP ($USD billions PPP) 2019", true);
   } else if (category === "GDP-2020-bar") {
     stackedExists2 = false; 
+    chart2Category =  "GDP ($USD billions PPP) 2020";
     createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 23000, "GDP ($USD billions PPP) 2020", true);
   } else if (category === "GDP-2021-bar") {
     stackedExists2 = false; 
+    chart2Category =  "GDP ($USD billions PPP) 2021";
     createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 23000, "GDP ($USD billions PPP) 2021", true);
   } else if (category === "health-military-gdp-2019-stacked") {
     stackedExists2 = true; 
+    chart2Category =  "GDP ($USD billions PPP) 2019";
     createStackedBarChart("2019GDPHealthMilitary2.csv", svg2, width2, height2, marginTwo, 100, "GDP ($USD billions PPP) 2019");
   } else if (category === "health-military-gdp-2021-stacked") {
     stackedExists2 = true; 
+    chart2Category =  "GDP ($USD billions PPP) 2021";
     createStackedBarChart("2021GDPHealthMilitary2.csv", svg2, width2, height2, marginTwo, 100, "GDP ($USD billions PPP) 2021");
   } else if (category === "unemployement-2021-bar") {
     stackedExists2 = false; 
+    chart2Category =  "unemployment (%) 2021";
     createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 50, "unemployment (%) 2021", false, true); 
   } else if (category === "unemployement-2018-bar") {
     stackedExists2 = false; 
+    chart2Category =  "unemployment (%) 2018";
     createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 50, "unemployment (%) 2018", false, true); 
   }
 }
