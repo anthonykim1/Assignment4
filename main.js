@@ -726,11 +726,17 @@ function createStackedBarChart(nameOfDataset, targetSVG, width, height, margin, 
       .text(columnTitle);
 
        // color palette choices 
-    var color = d3.scaleOrdinal()
+    var color;
+    if (subgroups.length == 3) {
+      color = d3.scaleOrdinal()
       .domain(subgroups)
       // .range(['#e41a1c','#377eb8','#4daf4a'])
       .range(['#ff5768','#00A5E3','#69b3a2']) // red, blue, green
         //stack the data? --> stack per subgroup
+    } else {
+      color = d3.scaleOrdinal().domain(subgroups).range(["#00ff00", "#ff5768"])
+    }
+    
     var stackedData = d3.stack()
       .keys(subgroups)
       (data)
