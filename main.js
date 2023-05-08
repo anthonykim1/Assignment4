@@ -275,18 +275,111 @@ function createBarChart(nameOfDataset, targetSVG, width, height, margin, yDomain
     .style("font-size", "6px");
 
   if (isLog) {
+    var yScale = d3.scaleLog()
+      .base(2)
+      .domain([1, yDomainScaleForAxis]) // ****** changing the values inside this parenthesis can change the extent of y
+      .range([height, 0]);
+      targetSVG.append("g")
+        .attr("class", "y-axis")
+        .call(d3.axisLeft(yScale));
+        
+      targetSVG.append("text")
+        .attr("class", "y-axis-title")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 0 - margin.left)
+        .attr("x",0 - (height / 2))
+        .attr("dy", "1em")
+        .style("text-anchor", "middle")
+        .style("font-size", "10px")
+        .text(columnTitle);
+
+      let baseline_value;
+      var callOther;
+      if (targetSVG == svg || targetSVG === svg) {
+        callOther = "svg2";
+      } else {
+        callOther = "svg";
+      }
+      // Bar starts here
+      targetSVG.selectAll(".bar")
+      .data(data)
+      .enter()
+      .append("rect")
+        .attr("class", "bar")
+        .attr("x", function(d) {
+          if(d.Country === "United States") {
+            baseline_value = yScale(+d[columnTitle]);
+          }
+          return xScale(d.Country);
+        })
+        .attr("y", function(d) { return yScale(+d[columnTitle]); }) // log
+        .attr("width", xScale.bandwidth())
+        .attr("height", function(d) { return height - yScale(+d[columnTitle]); }) // log
+        .attr("fill", "#69b3a2")
+        .on("mouseover", function(d) {
+          // figure out what we need to also call.. If at top call bottom if at bottom call top
+          svg.selectAll("bar-label").remove();
+          svg2.selectAll("bar-label").remove();
+          
+          onClickBaseline(d.Country, callOther); 
+          if (!d3.select(this).classed("bar selected")) {
+            d3.select(this).attr("fill", "red");
+            targetSVG.append("text")
+              .attr("class", "bar-label")
+              .attr("x", xScale(d.Country) + xScale.bandwidth() / 2)
+              .attr("y", yScale(+d[columnTitle]) - 10)
+              .attr("text-anchor", "middle")
+              .style("font-size", "10px")
+              .text(d.Country + " " + d[columnTitle])
+          }
+        })
+        .on("mouseout", function(d) {
+          if (!d3.select(this).classed("bar selected")) {
+            unClickBaseline(d.Country, callOther); // call to trigger baseline un-highlighting in both places
+            d3.select(this).attr("fill", "#69b3a2");
+            svg.selectAll(".bar-label").remove();
+            svg2.selectAll(".bar-label").remove();
+          }
+        })
+        .on("click", function(d){
+          targetSVG.selectAll("bar-label").remove();
+          targetSVG.select(".baseline").remove();
+          targetSVG.select(".baseline-country").remove();
+  
+          targetSVG.selectAll(".bar").classed("selected", false);
+          // add the "selected" class to the clicked bar
+          d3.select(this).classed("selected", true);
+          // set the fill color of the selected bar to red
+          targetSVG.selectAll(".bar").attr("fill", "#69b3a2")
+          d3.select(this).attr("fill", "yellow");
+  
+          baseline_value = yScale(+d[columnTitle]); 
+          targetSVG.append("line")
+            .attr("class", "baseline")
+            .attr("x1", 0)
+            .attr("y1", baseline_value)
+            .attr("x2", width)
+            .attr("y2", baseline_value)
+            .style("stroke", "#999")
+            .style("stroke-dasharray", ("3, 3"));
+          targetSVG.append("text")
+            .attr("class", "baseline-country")
+            .attr("x", xScale(d.Country) + xScale.bandwidth() / 2)
+            .attr("y", yScale(+d[columnTitle]) - 10)
+            .attr("text-anchor", "middle")
+            .style("font-size", "10px")
+            .text(d.Country + " " + d[columnTitle]);
+          syncBaseline(d.Country, callOther);
+          currentCategory = columnTitle;
+          displayLineChart(d.Country, callOther);
+        });
+
+  } else { // linear & animation
     var yScale = d3.scaleLinear()
       .domain([0, yDomainScaleForAxis]) // ****** changing the values inside this parenthesis can change the extent of y
       .range([height, 0]);
-    // var yScale = d3.scaleLog()
-    //   .base(2)
-    //   .domain([1, yDomainScaleForAxis]) // ****** changing the values inside this parenthesis can change the extent of y
-    //   .range([height, 0]);
-  } else {
-    var yScale = d3.scaleLinear()
-      .domain([0, yDomainScaleForAxis]) // ****** changing the values inside this parenthesis can change the extent of y
-      .range([height, 0]);
-  }
+  
+
   targetSVG.append("g")
     .attr("class", "y-axis")
     .call(d3.axisLeft(yScale));
@@ -309,7 +402,6 @@ function createBarChart(nameOfDataset, targetSVG, width, height, margin, yDomain
     callOther = "svg";
   }
 
-
   // Bar starts here
   targetSVG.selectAll(".bar")
     .data(data)
@@ -322,9 +414,9 @@ function createBarChart(nameOfDataset, targetSVG, width, height, margin, yDomain
         }
         return xScale(d.Country);
       })
-      .attr("y", function(d) { return yScale(0); })
+      .attr("y", function(d) { return yScale(0); }) // animation
       .attr("width", xScale.bandwidth())
-      .attr("height", function(d) { return height - yScale(0); })
+      .attr("height", function(d) { return height - yScale(0); }) // animation
       .attr("fill", "#69b3a2")
       .on("mouseover", function(d) {
         // figure out what we need to also call.. If at top call bottom if at bottom call top
@@ -384,13 +476,15 @@ function createBarChart(nameOfDataset, targetSVG, width, height, margin, yDomain
         currentCategory = columnTitle;
         displayLineChart(d.Country, callOther);
       });
-
+      
       // Animation
       targetSVG.selectAll("rect")
       .transition()
       .duration(800)
       .attr("y", function(d) { return yScale(+d[columnTitle]);  })
       .attr("height", function(d) { return height - yScale(+d[columnTitle]);  });
+
+    } // linear & animation end
 })
 }
 
@@ -558,10 +652,10 @@ function updateChartTwo(category) {
     createStackedBarChart("2021GDPHealthMilitary2.csv", svg2, width2, height2, marginTwo, 100, "GDP ($USD billions PPP) 2021");
   } else if (category === "unemployement-2021-bar") {
     stackedExists2 = false; 
-    createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 50, "unemployment (%) 2021", false); 
+    createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 50, "unemployment (%) 2021", false, true); 
   } else if (category === "unemployement-2018-bar") {
     stackedExists2 = false; 
-    createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 50, "unemployment (%) 2018", false); 
+    createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 50, "unemployment (%) 2018", false, true); 
   }
 }
 
@@ -722,7 +816,7 @@ function createStackedBarChart(nameOfDataset, targetSVG, width, height, margin, 
 
 // Let other svg (top,bottom) know that one chart clicked into baseline.
 // make it highlight with red
-function onClickBaseline(countryName, whichSVGToCall) {// breakpoint
+function onClickBaseline(countryName, whichSVGToCall) { // breakpoint
   // console.log("here");
   // console.log(svg2.selectAll('.rect'));
   svg.select(".bar-label").remove();
