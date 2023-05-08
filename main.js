@@ -205,6 +205,7 @@ function onSortingCategoryChanged(){
 }
 // Drop down choice updated, fire signal to display the "correct" chart for top chart
 function onCategoryChanged() {
+  //console.log("category 1 changed");
   var select = d3.select('#categorySelect').node();
   // Get current value of select element
   var category = select.options[select.selectedIndex].value;
@@ -482,6 +483,7 @@ createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 4000, "GDP ($USD
 var stackedExists1 = false; 
 var stackedExists2 = false; 
 function updateChart(category){
+  //console.log("updating chart #1");
   if(category === "gdp-per-capita-2018-bar") {
     stackedExists1 = false; 
     createBarChart("dataset.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2018");
