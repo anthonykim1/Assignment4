@@ -10,12 +10,19 @@ body {
     margin: 0;
 }
 
+#sortby {
+    margin-left: 20px;
+}
+
 #main {
     margin: 20px;
+    margin-top: 0px;
 }
 
 #second {
     margin: 20px;
+    margin-top: 0px;
+    margin-bottom: 0px;
 }
 
 .filter {
