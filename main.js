@@ -378,7 +378,7 @@ function createBarChart(nameOfDataset, targetSVG, width, height, margin, yDomain
             .attr("y1", baseline_value)
             .attr("x2", width)
             .attr("y2", baseline_value)
-            .style("stroke", "#999")
+            .style("stroke", "#ffec59")
             .style("stroke-dasharray", ("3, 3"));
           targetSVG.append("text")
             .attr("class", "baseline-country")
@@ -482,7 +482,7 @@ function createBarChart(nameOfDataset, targetSVG, width, height, margin, yDomain
           .attr("y1", baseline_value)
           .attr("x2", width)
           .attr("y2", baseline_value)
-          .style("stroke", "#999")
+          .style("stroke", "#ffec59")
           .style("stroke-dasharray", ("3, 3"));
         targetSVG.append("text")
           .attr("class", "baseline-country")
@@ -530,14 +530,14 @@ function syncBaseline(countryName, whichSVGToCall, columnTitle) {
         .attr("y", d3.select(this).attr('y') - 10)
         .attr("text-anchor", "middle")
         .style("font-size", "10px")
-        .text(d.Country + " " + d[columnTitle])
+        .text(d.Country + " " + d[chart2Category])
         svg2.append("line")
           .attr("class", "baseline")
           .attr("x1", 0)
           .attr("y1", d3.select(this).attr('y'))
           .attr("x2", width)
           .attr("y2", d3.select(this).attr('y'))
-          .style("stroke", "#999")
+          .style("stroke", "#ffec59")
           .style("stroke-dasharray", ("3, 3"));
       } else {
         d3.select(this).attr("fill", "#69b3a2");
@@ -550,7 +550,7 @@ function syncBaseline(countryName, whichSVGToCall, columnTitle) {
       if (d.Country === countryName) {
         svg.select(".baseline").remove();
         svg.select(".baseline-country").remove();
-
+        console.log(chart1Category);
         svg.selectAll(".bar").classed("selected", false);
         // add the "selected" class to the clicked bar
         d3.select(this).classed("selected", true);
@@ -566,14 +566,14 @@ function syncBaseline(countryName, whichSVGToCall, columnTitle) {
         .attr("y", d3.select(this).attr('y')-10)
         .attr("text-anchor", "middle")
         .style("font-size", "10px")
-        .text(d.Country + " " + d[columnTitle])
+        .text(d.Country + " " + d[chart1Category])
         svg.append("line")
           .attr("class", "baseline")
           .attr("x1", 0)
           .attr("y1", d3.select(this).attr('y'))
           .attr("x2", width)
           .attr("y2", d3.select(this).attr('y'))
-          .style("stroke", "#999")
+          .style("stroke", "#ffec59")
           .style("stroke-dasharray", ("3, 3"));
       } else {
         d3.select(this).attr("fill", "#69b3a2");
@@ -610,32 +610,41 @@ createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 23000, "GDP ($US
 // Let us know what we selected from the top dropdown.
 var stackedExists1 = false; 
 var stackedExists2 = false; 
+var chart1Category = "GDP per capita in $ (PPP) 2018"; 
 function updateChart(category){
   //console.log("updating chart #1");
   if(category === "gdp-per-capita-2018-bar") {
     stackedExists1 = false; 
-    createBarChart("dataset.csv", svg, width, height, margin, 120000, "GDP per capita in $ (PPP) 2018", false, "capita");
+    chart1Category =  "GDP per capita in $ (PPP) 2018";
+    createBarChart("dataset.csv", svg, width, height, margin, 120000, "GDP per capita in $ (PPP) 2018", false);
   } else if (category === "gdp-per-capita-2019-bar") {
+    chart1Category =  "GDP per capita in $ (PPP) 2019";
     stackedExists1 = false; 
     createBarChart("dataset.csv", svg, width, height, margin, 120000, "GDP per capita in $ (PPP) 2019", false, "capita");
   } else if (category === "gdp-per-capita-2020-bar") {
     stackedExists1 = false; 
-    createBarChart("dataset.csv", svg, width, height, margin, 120000, "GDP per capita in $ (PPP) 2020", false, "capita");
+    chart1Category =  "GDP per capita in $ (PPP) 2020";
+    createBarChart("dataset.csv", svg, width, height, margin, 120000, "GDP per capita in $ (PPP) 2020", false);
   } else if (category === "gdp-per-capita-2021-bar") {
     stackedExists1 = false; 
-    createBarChart("dataset.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2021", false, "capita");
+    chart1Category =  "GDP per capita in $ (PPP) 2021";
+    createBarChart("dataset.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2021", false);
   } else if (category === "health-gdp-cap-2018-stacked") {
     stackedExists1 = true; 
+    chart1Category =  "GDP per capita in $ (PPP) 2018";
     createStackedBarChart("2018GDPperCapitaHealth.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2018");
   } else if (category === "health-gdp-cap-2019-stacked") {
     stackedExists1 = true; 
+    chart1Category =  "GDP per capita in $ (PPP) 2019";
     createStackedBarChart("2019GDPperCapitaHealth.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2019");
   } else if (category === "health-2018-bar") {
     stackedExists1 = false; 
-    createBarChart("dataset.csv", svg, width, height, margin, 11000, "health expenditure per person ($) 2018", false, "health");
+    chart1Category =  "health expenditure per person ($) 2018";
+    createBarChart("dataset.csv", svg, width, height, margin, 11000, "health expenditure per person ($) 2018", false);
   } else if (category === "health-2019-bar") {
     stackedExists1 = false; 
-    createBarChart("dataset.csv", svg, width, height, margin, 11000, "health expenditure per person ($) 2019", false, "health");
+    chart1Category =  "health expenditure per person ($) 2018";
+    createBarChart("dataset.csv", svg, width, height, margin, 11000, "health expenditure per person ($) 2019", false);
   }
 }
 
@@ -649,25 +658,31 @@ function updateChart(category){
 //     createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 50, "unemployment (%) 2021"); 
 //   }
 // }
-
+var chart2Category = "GDP ($USD billions PPP) 2018";
 function updateChartTwo(category) {
   if(category === "GDP-2018-bar") {
     stackedExists2 = false; 
+    chart2Category =  "GDP ($USD billions PPP) 2018";
     createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 23000, "GDP ($USD billions PPP) 2018", true);
   } else if (category === "GDP-2019-bar") {
     stackedExists2 = false; 
+    chart2Category =  "GDP ($USD billions PPP) 2019";
     createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 23000, "GDP ($USD billions PPP) 2019", true);
   } else if (category === "GDP-2020-bar") {
     stackedExists2 = false; 
+    chart2Category =  "GDP ($USD billions PPP) 2020";
     createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 23000, "GDP ($USD billions PPP) 2020", true);
   } else if (category === "GDP-2021-bar") {
     stackedExists2 = false; 
+    chart2Category =  "GDP ($USD billions PPP) 2021";
     createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 23000, "GDP ($USD billions PPP) 2021", true);
   } else if (category === "health-military-gdp-2019-stacked") {
     stackedExists2 = true; 
+    chart2Category =  "GDP ($USD billions PPP) 2019";
     createStackedBarChart("2019GDPHealthMilitary2.csv", svg2, width2, height2, marginTwo, 100, "GDP ($USD billions PPP) 2019");
   } else if (category === "health-military-gdp-2021-stacked") {
     stackedExists2 = true; 
+    chart2Category =  "GDP ($USD billions PPP) 2021";
     createStackedBarChart("2021GDPHealthMilitary2.csv", svg2, width2, height2, marginTwo, 100, "GDP ($USD billions PPP) 2021");
   } else if (category === "unemployement-2021-bar") {
     stackedExists2 = false; 
@@ -861,7 +876,7 @@ function onClickBaseline(countryName, whichSVGToCall) { // breakpoint
   if(stackedExists1 && whichSVGToCall == "svg2"){
     svg2.selectAll('rect').each(function(d,i) {
       if (d.Country == countryName && !d3.select(this).classed("bar selected")) {
-        d3.select(this).attr("fill", "red");
+        d3.select(this).attr("fill", "red"); 
         svg2.append("text")
         .attr("class", "bar-label")
         .attr("x", d3.select(this).attr('x'))
@@ -879,7 +894,7 @@ function onClickBaseline(countryName, whichSVGToCall) { // breakpoint
   } else if(stackedExists2 && whichSVGToCall == "svg"){
     svg.selectAll('rect').each(function(d,i) {
       if (d.Country == countryName && !d3.select(this).classed("bar selected")) {
-        d3.select(this).attr("fill", "red");
+        d3.select(this).attr("fill", "red"); 
         svg.append("text")
         .attr("class", "bar-label")
         .attr("x", d3.select(this).attr('x'))
