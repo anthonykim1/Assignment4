@@ -369,7 +369,7 @@ function createBarChart(nameOfDataset, targetSVG, width, height, margin, yDomain
             .attr("text-anchor", "middle")
             .style("font-size", "10px")
             .text(d.Country + " " + d[columnTitle]);
-          syncBaseline(d.Country, callOther);
+          syncBaseline(d.Country, callOther, columnTitle);
           currentCategory = columnTitle;
           displayLineChart(d.Country, callOther);
         });
@@ -488,7 +488,7 @@ function createBarChart(nameOfDataset, targetSVG, width, height, margin, yDomain
 })
 }
 
-function syncBaseline(countryName, whichSVGToCall) {
+function syncBaseline(countryName, whichSVGToCall, columnTitle) {
   if(whichSVGToCall === "svg2" && !stackedExists2) {
     svg2.selectAll("bar-label").remove(); 
     svg2.selectAll('rect').each(function(d,i) {
@@ -511,7 +511,7 @@ function syncBaseline(countryName, whichSVGToCall) {
         .attr("y", d3.select(this).attr('y'))
         .attr("text-anchor", "middle")
         .style("font-size", "10px")
-        .text(d.Country)
+        .text(d.Country + " " + d[columnTitle])
         svg2.append("line")
           .attr("class", "baseline")
           .attr("x1", 0)
@@ -547,7 +547,7 @@ function syncBaseline(countryName, whichSVGToCall) {
         .attr("y", d3.select(this).attr('y'))
         .attr("text-anchor", "middle")
         .style("font-size", "10px")
-        .text(d.Country)
+        .text(d.Country + " " + d[columnTitle])
         svg.append("line")
           .attr("class", "baseline")
           .attr("x1", 0)

@@ -7,20 +7,8 @@
     <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-    <div id = "second">
-      <br>
-          <label for="categorySelectTwo">Show: </label>
-            <select class="custom-select" id="categorySelectTwo" onchange="onCategoryChangedTwo()">
-              <option selected value="GDP-2018-bar">GDP 2018</option>
-              <option value="GDP-2019-bar">GDP 2019</option>
-              <option value="GDP-2020-bar">GDP 2020</option>
-              <option value="GDP-2021-bar">GDP 2021</option>
-              <option value="health-military-gdp-2019-stacked">Health & Military & GDP 2019</option>
-              <option value="health-military-gdp-2021-stacked">Health & Military & GDP 2021</option>
-              <option value="unemployement-2018-bar">Unemployment 2018</option>
-              <option value="unemployement-2021-bar">Unemployment 2021</option>
-            </select>
-          <label for="sortingSelect">Sort by: </label>
+    <div>
+      <label for="sortingSelect">Sort by: </label>
             <select class="custom-select" id="categorySelectSorting" onchange="onSortingCategoryChanged()">
               <option selected value="GDP ($USD billions PPP) 2018">GDP 2018</option>
               <option value="GDP ($USD billions PPP) 2019">GDP 2019</option>
@@ -35,6 +23,21 @@
               <option value="health expenditure per person ($) 2018">Health Expenditure 2018</option>
               <option value="health expenditure per person ($) 2019">Health Expenditure 2019</option>
             </select>
+    </div>
+    <div id = "second">
+      <br>
+          <label for="categorySelectTwo">Show: </label>
+            <select class="custom-select" id="categorySelectTwo" onchange="onCategoryChangedTwo()">
+              <option selected value="GDP-2018-bar">GDP 2018</option>
+              <option value="GDP-2019-bar">GDP 2019</option>
+              <option value="GDP-2020-bar">GDP 2020</option>
+              <option value="GDP-2021-bar">GDP 2021</option>
+              <option value="health-military-gdp-2019-stacked">Health & Military & GDP 2019</option>
+              <option value="health-military-gdp-2021-stacked">Health & Military & GDP 2021</option>
+              <option value="unemployement-2018-bar">Unemployment 2018</option>
+              <option value="unemployement-2021-bar">Unemployment 2021</option>
+            </select>
+          
             <br>
     </div>
     <div id="main">
