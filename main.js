@@ -306,9 +306,9 @@ d3.csv(nameOfDataset).then(function(dataset) {
         }
         return xScale(d.Country);
       })
-      .attr("y", function(d) { return yScale(+d[columnTitle]); })
+      .attr("y", function(d) { return yScale(0); })
       .attr("width", xScale.bandwidth())
-      .attr("height", function(d) { return height - yScale(+d[columnTitle]); })
+      .attr("height", function(d) { return height - yScale(0); })
       .attr("fill", "#69b3a2")
       .on("mouseover", function(d) {
         // figure out what we need to also call.. If at top call bottom if at bottom call top
@@ -368,6 +368,13 @@ d3.csv(nameOfDataset).then(function(dataset) {
         currentCategory = columnTitle;
         displayLineChart(d.Country, callOther);
       });
+
+      // Animation
+      targetSVG.selectAll("rect")
+      .transition()
+      .duration(800)
+      .attr("y", function(d) { return yScale(+d[columnTitle]);  })
+      .attr("height", function(d) { return height - yScale(+d[columnTitle]);  });
 })
 }
 
