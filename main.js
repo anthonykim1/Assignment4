@@ -270,6 +270,8 @@ function createBarChart(nameOfDataset, targetSVG, width, height, margin, yDomain
 
   
   // clear caching 
+  targetSVG.selectAll("text").remove();
+  targetSVG.selectAll("circle").remove();
   targetSVG.selectAll(".bar").remove();
   targetSVG.select(".x-axis").remove();
   targetSVG.select(".y-axis").remove();
@@ -418,7 +420,7 @@ function createBarChart(nameOfDataset, targetSVG, width, height, margin, yDomain
     .attr("class", "y-axis-title")
     .attr("transform", "rotate(-90)")
     .attr("y", 0 - margin.left)
-    .attr("x",0 - (height / 2))
+    .attr("x", 0 - (height / 2))
     .attr("dy", "1em")
     .style("text-anchor", "middle")
     .style("font-size", "10px")
@@ -648,11 +650,11 @@ function updateChart(category){
   } else if (category === "health-gdp-cap-2018-stacked") {
     stackedExists1 = true; 
     chart1Category =  "GDP per capita in $ (PPP) 2018";
-    createStackedBarChart("2018GDPperCapitaHealth.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2018", "capita");
+    createStackedBarChart("2018GDPperCapitaHealth.csv", svg, width, height, margin, 120000, "GDP per capita in $ (PPP) 2018", "capita");
   } else if (category === "health-gdp-cap-2019-stacked") {
     stackedExists1 = true; 
     chart1Category =  "GDP per capita in $ (PPP) 2019";
-    createStackedBarChart("2019GDPperCapitaHealth.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2019", "capita");
+    createStackedBarChart("2019GDPperCapitaHealth.csv", svg, width, height, margin, 120000, "GDP per capita in $ (PPP) 2019", "capita");
   } else if (category === "health-2018-bar") {
     stackedExists1 = false; 
     chart1Category =  "health expenditure per person ($) 2018";
@@ -778,8 +780,8 @@ function createStackedBarChart(nameOfDataset, targetSVG, width, height, margin, 
     targetSVG.append("text")
       .attr("class", "y-axis-title")
       .attr("transform", "rotate(-90)")
-      .attr("y", -15 - margin.right)
-      .attr("x",0 - (height / 2))
+      .attr("y", 0 - margin.left)
+      .attr("x", 0 - (height / 2))
       .attr("dy", "1em")
       .style("text-anchor", "middle")
       .style("font-size", "10px")
