@@ -241,8 +241,24 @@ function onCategoryChangedTwo() {
 }
 
 /////////////////////////////////////////////////////// Refactoring Completed for bar charts
-function createBarChart(nameOfDataset, targetSVG, width, height, margin, yDomainScaleForAxis, columnTitle, isLog) {
+function createBarChart(nameOfDataset, targetSVG, width, height, margin, yDomainScaleForAxis, columnTitle, isLog, barCategory) {
+  
   d3.csv(nameOfDataset).then(function(dataset) {
+    console.log(barCategory);
+    var barColor;
+  if (barCategory == "health") {
+    barColor = "#ff5768";
+  } else if (barCategory == "capita"){
+    barColor = "#6c88c4";
+  } else if (barCategory == "unemployment") {
+    console.log("gray");
+    barColor = "#B2BEB5"; // gray for unemployment for now 
+  } else {
+    barColor = "#69b3a2";
+  }
+  
+    
+  
   // clear caching 
   targetSVG.selectAll(".bar").remove();
   targetSVG.select(".x-axis").remove();
@@ -300,6 +316,7 @@ function createBarChart(nameOfDataset, targetSVG, width, height, margin, yDomain
       } else {
         callOther = "svg";
       }
+      // console.log(barCategory);
       // Bar starts here
       targetSVG.selectAll(".bar")
       .data(data)
@@ -315,7 +332,8 @@ function createBarChart(nameOfDataset, targetSVG, width, height, margin, yDomain
         .attr("y", function(d) { return yScale(+d[columnTitle]); }) // log
         .attr("width", xScale.bandwidth())
         .attr("height", function(d) { return height - yScale(+d[columnTitle]); }) // log
-        .attr("fill", "#69b3a2")
+        // console.log(barColor)
+        .attr("fill", barColor)
         .on("mouseover", function(d) {
           // figure out what we need to also call.. If at top call bottom if at bottom call top
           svg.selectAll("bar-label").remove();
@@ -417,7 +435,8 @@ function createBarChart(nameOfDataset, targetSVG, width, height, margin, yDomain
       .attr("y", function(d) { return yScale(0); }) // animation
       .attr("width", xScale.bandwidth())
       .attr("height", function(d) { return height - yScale(0); }) // animation
-      .attr("fill", "#69b3a2")
+      // .attr("fill", "#69b3a2")
+      .attr("fill", barColor)
       .on("mouseover", function(d) {
         // figure out what we need to also call.. If at top call bottom if at bottom call top
         svg.selectAll("bar-label").remove();
@@ -574,7 +593,7 @@ function syncBaseline(countryName, whichSVGToCall, columnTitle) {
  
 
 // display 2021 GDP per capita for top chart as default
-createBarChart("dataset.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2021", false);
+createBarChart("dataset.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2021", false, "capita");
 createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 23000, "GDP ($USD billions PPP) 2019", true);
 
 ////
@@ -595,16 +614,16 @@ function updateChart(category){
   //console.log("updating chart #1");
   if(category === "gdp-per-capita-2018-bar") {
     stackedExists1 = false; 
-    createBarChart("dataset.csv", svg, width, height, margin, 120000, "GDP per capita in $ (PPP) 2018", false);
+    createBarChart("dataset.csv", svg, width, height, margin, 120000, "GDP per capita in $ (PPP) 2018", false, "capita");
   } else if (category === "gdp-per-capita-2019-bar") {
     stackedExists1 = false; 
-    createBarChart("dataset.csv", svg, width, height, margin, 120000, "GDP per capita in $ (PPP) 2019", false);
+    createBarChart("dataset.csv", svg, width, height, margin, 120000, "GDP per capita in $ (PPP) 2019", false, "capita");
   } else if (category === "gdp-per-capita-2020-bar") {
     stackedExists1 = false; 
-    createBarChart("dataset.csv", svg, width, height, margin, 120000, "GDP per capita in $ (PPP) 2020", false);
+    createBarChart("dataset.csv", svg, width, height, margin, 120000, "GDP per capita in $ (PPP) 2020", false, "capita");
   } else if (category === "gdp-per-capita-2021-bar") {
     stackedExists1 = false; 
-    createBarChart("dataset.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2021", false);
+    createBarChart("dataset.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2021", false, "capita");
   } else if (category === "health-gdp-cap-2018-stacked") {
     stackedExists1 = true; 
     createStackedBarChart("2018GDPperCapitaHealth.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2018");
@@ -613,10 +632,10 @@ function updateChart(category){
     createStackedBarChart("2019GDPperCapitaHealth.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2019");
   } else if (category === "health-2018-bar") {
     stackedExists1 = false; 
-    createBarChart("dataset.csv", svg, width, height, margin, 11000, "health expenditure per person ($) 2018", false);
+    createBarChart("dataset.csv", svg, width, height, margin, 11000, "health expenditure per person ($) 2018", false, "health");
   } else if (category === "health-2019-bar") {
     stackedExists1 = false; 
-    createBarChart("dataset.csv", svg, width, height, margin, 11000, "health expenditure per person ($) 2019", false);
+    createBarChart("dataset.csv", svg, width, height, margin, 11000, "health expenditure per person ($) 2019", false, "health");
   }
 }
 
@@ -652,10 +671,10 @@ function updateChartTwo(category) {
     createStackedBarChart("2021GDPHealthMilitary2.csv", svg2, width2, height2, marginTwo, 100, "GDP ($USD billions PPP) 2021");
   } else if (category === "unemployement-2021-bar") {
     stackedExists2 = false; 
-    createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 50, "unemployment (%) 2021", false, true); 
+    createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 50, "unemployment (%) 2021", false, "unemployment"); 
   } else if (category === "unemployement-2018-bar") {
     stackedExists2 = false; 
-    createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 50, "unemployment (%) 2018", false, true); 
+    createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 50, "unemployment (%) 2018", false, "unemployment"); 
   }
 }
 
