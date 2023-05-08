@@ -616,7 +616,7 @@ function updateChart(category){
   if(category === "gdp-per-capita-2018-bar") {
     stackedExists1 = false; 
     chart1Category =  "GDP per capita in $ (PPP) 2018";
-    createBarChart("dataset.csv", svg, width, height, margin, 120000, "GDP per capita in $ (PPP) 2018", false);
+    createBarChart("dataset.csv", svg, width, height, margin, 120000, "GDP per capita in $ (PPP) 2018", false, "capita");
   } else if (category === "gdp-per-capita-2019-bar") {
     chart1Category =  "GDP per capita in $ (PPP) 2019";
     stackedExists1 = false; 
@@ -624,27 +624,27 @@ function updateChart(category){
   } else if (category === "gdp-per-capita-2020-bar") {
     stackedExists1 = false; 
     chart1Category =  "GDP per capita in $ (PPP) 2020";
-    createBarChart("dataset.csv", svg, width, height, margin, 120000, "GDP per capita in $ (PPP) 2020", false);
+    createBarChart("dataset.csv", svg, width, height, margin, 120000, "GDP per capita in $ (PPP) 2020", false, "capita");
   } else if (category === "gdp-per-capita-2021-bar") {
     stackedExists1 = false; 
     chart1Category =  "GDP per capita in $ (PPP) 2021";
-    createBarChart("dataset.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2021", false);
+    createBarChart("dataset.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2021", false, "capita");
   } else if (category === "health-gdp-cap-2018-stacked") {
     stackedExists1 = true; 
     chart1Category =  "GDP per capita in $ (PPP) 2018";
-    createStackedBarChart("2018GDPperCapitaHealth.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2018");
+    createStackedBarChart("2018GDPperCapitaHealth.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2018", "capita");
   } else if (category === "health-gdp-cap-2019-stacked") {
     stackedExists1 = true; 
     chart1Category =  "GDP per capita in $ (PPP) 2019";
-    createStackedBarChart("2019GDPperCapitaHealth.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2019");
+    createStackedBarChart("2019GDPperCapitaHealth.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2019", "capita");
   } else if (category === "health-2018-bar") {
     stackedExists1 = false; 
     chart1Category =  "health expenditure per person ($) 2018";
-    createBarChart("dataset.csv", svg, width, height, margin, 11000, "health expenditure per person ($) 2018", false);
+    createBarChart("dataset.csv", svg, width, height, margin, 11000, "health expenditure per person ($) 2018", false, "health");
   } else if (category === "health-2019-bar") {
     stackedExists1 = false; 
     chart1Category =  "health expenditure per person ($) 2018";
-    createBarChart("dataset.csv", svg, width, height, margin, 11000, "health expenditure per person ($) 2019", false);
+    createBarChart("dataset.csv", svg, width, height, margin, 11000, "health expenditure per person ($) 2019", false, "health");
   }
 }
 
