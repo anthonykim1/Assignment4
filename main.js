@@ -627,7 +627,7 @@ function syncBaseline(countryName, whichSVGToCall, columnTitle) {
 
 // display 2021 GDP per capita for top chart as default
 createBarChart("dataset.csv", svg, width, height, margin, 140000, "GDP per capita in $ (PPP) 2021", false, "capita");
-createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 23000, "GDP ($USD billions PPP) 2019", true);
+createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 23000, "GDP ($USD billions PPP) 2018", true);
 
 ////
 // function updateChart(category){
