@@ -719,10 +719,10 @@ function updateChartTwo(category) {
     createStackedBarChart("2021GDPHealthMilitary2.csv", svg2, width2, height2, marginTwo, 100, "GDP ($USD billions PPP) 2021");
   } else if (category === "unemployement-2021-bar") {
     stackedExists2 = false; 
-    createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 50, "unemployment (%) 2021", false, "unemployment"); 
+    createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 35, "unemployment (%) 2021", false, "unemployment"); 
   } else if (category === "unemployement-2018-bar") {
     stackedExists2 = false; 
-    createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 50, "unemployment (%) 2018", false, "unemployment"); 
+    createBarChart("dataset.csv", svg2, width2, height2, marginTwo, 35, "unemployment (%) 2018", false, "unemployment"); 
   }
 }
 
